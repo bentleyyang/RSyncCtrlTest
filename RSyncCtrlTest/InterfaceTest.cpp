@@ -124,12 +124,240 @@ void InterfaceTest::test1()
 
 void InterfaceTest::testGetCertInfo()
 {
+	using namespace rapidjson;
+
+	//预期失败1 type不符
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"-1"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) != "0000");
+	}
+
+	//预期失败2 证书不符
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(L"#$^%$&@fg", L"1"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) != "0000");
+	}
+
+	//预期成功1 证书版本
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"1"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功2 证书序列号
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"2"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功3 证书颁发者信息
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"5"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功4 证书拥有者信息
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"7"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功5 证书有效期
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"6"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功6 证书颁发者CN
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"33"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功7 证书颁发者O
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"34"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功8 证书颁发者OU
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"35"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功9 证书拥有者信息CN
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"49"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功10 证书拥有者信息O
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"50"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功11 证书拥有者信息OU
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"51"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功12 证书拥有者信息EMAIL
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"52"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功13 个人证书身份证号
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"53"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功14 企业统一社会信用代码
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"54"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功15 证书使用者密钥标识符
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"55"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
+
+	//预期成功16 证书唯一码
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"300"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
+
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+	}
 
 }
 
 void InterfaceTest::testGetUserList()
 {
+	using namespace rapidjson;
+	//预期成功1
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetUserList(); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		CPPUNIT_ASSERT(std::string(code->GetString()) == "0000");
 
+		const Value* userlist = GetValueByPointer(jsonDoc, "/data/userlist");
+		CPPUNIT_ASSERT(userlist&&userlist->IsString());
+		std::wstring userlistContent = to_wstr(userlist->GetString());
+	}
+
+	//预期失败
+	{
+
+	}
 }
 void InterfaceTest::testGetCertBase64String()
 {
@@ -172,9 +400,50 @@ void InterfaceTest::testGetCertBase64String()
 		std::string strCode = code->GetString();
 		CPPUNIT_ASSERT(strCode != "0000");
 	}
+
+	//预期失败2 证书不符
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(L"@$^%^%$fd", 2); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		std::string strCode = code->GetString();
+		CPPUNIT_ASSERT(strCode != "0000");
+	}
 }
 
 void InterfaceTest::testGetPinRetryCount()
+{
+	using namespace rapidjson;
+
+	//预期成功1
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetPinRetryCount(_RS_CONTAINER_ID); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		std::string strCode = code->GetString();
+		CPPUNIT_ASSERT(strCode == "0000");
+
+		const Value* retryCount = GetValueByPointer(jsonDoc, "/data/retryCount");
+		CPPUNIT_ASSERT(retryCount&&retryCount->IsString());
+		std::string retryCountContent = retryCount->GetString();
+		CPPUNIT_ASSERT(!retryCountContent.empty());
+		CPPUNIT_ASSERT(std::all_of(retryCountContent.begin(), retryCountContent.end(), ::isdigit));
+	}
+
+	//预期失败1 证书不符
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetPinRetryCount(L"@$^%^%$fd"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		std::string strCode = code->GetString();
+		CPPUNIT_ASSERT(strCode != "0000");
+	}
+}
+
+void InterfaceTest::testGetTransid()
 {
 
 }
@@ -931,11 +1200,6 @@ void InterfaceTest::testKeyDecryptByDigitalEnvelope()
 }
 
 void InterfaceTest::testKeyStatus()
-{
-
-}
-
-void InterfaceTest::testGetTransid()
 {
 
 }
