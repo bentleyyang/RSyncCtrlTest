@@ -11,13 +11,13 @@
 #include "rapidjson/pointer.h"
 
 #include "Utility.h"
-#include "RSyncCtrlTestDlg.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(InterfaceTest);
 
 
 #define _RS_CONTAINER_ID (L"F5BA5CE5-BC9A-49C8-AE47-1825115058D7")
 #define _RS_PASSWD (L"12345678")
+#define _RS_AUTH_CODE (L"")
 #define _RS_CERT_ENCRYPT (L"MIID8jCCA5igAwIBAgILIPOoHk2h3atHMfEwCgYIKoEcz1UBg3UwYjELMAkGA1UEBhMCQ04xJDAiBgNVBAoMG05FVENBIENlcnRpZmljYXRlIEF1dGhvcml0eTEtMCsGA1UEAwwkTkVUQ0EgU00yIFRFU1QwMSBhbmQgRXZhbHVhdGlvbiBDQTAxMB4XDTE5MTEwMTA0NTgyNloXDTI0MTEwMTA0NTgyNlowgdExCzAJBgNVBAYTAkNOMQ8wDQYDVQQIDAZGdWppYW4xMzAxBgNVBAcMKuemj+W7uuecgeemj+W3nuW4gum8k+alvOWMuua5luS4nOi3rzE4OOWPtzE9MDsGA1UECgw056aP5bu655Ge5pyv5L+h5oGv56eR5oqA5pyJ6ZmQ5YWs5Y+477yIU00y5rWL6K+VMu+8iTE9MDsGA1UEAww056aP5bu655Ge5pyv5L+h5oGv56eR5oqA5pyJ6ZmQ5YWs5Y+477yIU00y5rWL6K+VMu+8iTBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABJ1jTugwIT4TlNF2IxsxVxv\/exGmo+Io3Upj\/SJv+epJQgo5ehOjD\/jAMZq413KCqF41gIaS7Ec3BSVNXJsWjvOjggHDMIIBvzAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBT8CyNZp3dl6nPw8AoQTyAVLBKlGDAfBgNVHSMEGDAWgBQMe+ticwN1+oxKJAz2jzshZX4X6TBrBgNVHSAEZDBiMGAGCisGAQQBgZJIDQowUjBQBggrBgEFBQcCARZEaHR0cDovL3d3dy5jbmNhLm5ldC9jcy9rbm93bGVkZ2Uvd2hpdGVwYXBlci9jcHMvbmV0Q0F0ZXN0Y2VydGNwcy5wZGYwMwYDVR0fBCwwKjAooCagJIYiaHR0cDovL3Rlc3QuY25jYS5uZXQvY3JsL1NNMkNBLmNybDAOBgNVHQ8BAf8EBAMCAzgwNAYKKwYBBAGBkkgBDgQmDCQ1MjE2MDc4NmMwYTM3MmZjOGMzMzBhMDJiMTZjYmE2M0BTMDIwgYYGCCsGAQUFBwEBBHoweDBNBggrBgEFBQcwAYZBaHR0cDovLzE5Mi4xNjguMC43OS9vY3NwY29uc29sZS9vY3NwL29jc3BfY2hlY2tfdXNlcmNlcnRfc3RhdGUuZG8wJwYIKwYBBQUHMAGGG2h0dHA6Ly8xNzIuMC4wLjE6ODAvdGVzdHVybDAKBggqgRzPVQGDdQNIADBFAiBUQE+fdAD1eH6OyCuSURjv\/vp+x0MYv8Hkh8S4Ks\/svQIhANdkoJyTiNlij5wckuzhWDJLokcGIyup+y5JYS4xmt7D")
 
 #define _RS_CERT_SIGN (L"MIID8jCCA5igAwIBAgILENzv3NBdilQmXGUwCgYIKoEcz1UBg3UwYjELMAkGA1UEBhMCQ04xJDAiBgNVBAoMG05FVENBIENlcnRpZmljYXRlIEF1dGhvcml0eTEtMCsGA1UEAwwkTkVUQ0EgU00yIFRFU1QwMSBhbmQgRXZhbHVhdGlvbiBDQTAxMB4XDTE5MTEwMTA0NTgyNloXDTI0MTEwMTA0NTgyNlowgdExCzAJBgNVBAYTAkNOMQ8wDQYDVQQIDAZGdWppYW4xMzAxBgNVBAcMKuemj+W7uuecgeemj+W3nuW4gum8k+alvOWMuua5luS4nOi3rzE4OOWPtzE9MDsGA1UECgw056aP5bu655Ge5pyv5L+h5oGv56eR5oqA5pyJ6ZmQ5YWs5Y+477yIU00y5rWL6K+VMu+8iTE9MDsGA1UEAww056aP5bu655Ge5pyv5L+h5oGv56eR5oqA5pyJ6ZmQ5YWs5Y+477yIU00y5rWL6K+VMu+8iTBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABJPDjH4qPGIXcKopl6CYXTOqOAE2dmRchTE3TTlDtg7zTPFbe\/fOUFj+zlkUfrLWwopPAJOCA0cG\/ufkffHbhjejggHDMIIBvzAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQJVOszT+dSIPLoT8mIVl01gK37OTAfBgNVHSMEGDAWgBQMe+ticwN1+oxKJAz2jzshZX4X6TBrBgNVHSAEZDBiMGAGCisGAQQBgZJIDQowUjBQBggrBgEFBQcCARZEaHR0cDovL3d3dy5jbmNhLm5ldC9jcy9rbm93bGVkZ2Uvd2hpdGVwYXBlci9jcHMvbmV0Q0F0ZXN0Y2VydGNwcy5wZGYwMwYDVR0fBCwwKjAooCagJIYiaHR0cDovL3Rlc3QuY25jYS5uZXQvY3JsL1NNMkNBLmNybDAOBgNVHQ8BAf8EBAMCBsAwNAYKKwYBBAGBkkgBDgQmDCQ1MjE2MDc4NmMwYTM3MmZjOGMzMzBhMDJiMTZjYmE2M0BTMDIwgYYGCCsGAQUFBwEBBHoweDBNBggrBgEFBQcwAYZBaHR0cDovLzE5Mi4xNjguMC43OS9vY3NwY29uc29sZS9vY3NwL29jc3BfY2hlY2tfdXNlcmNlcnRfc3RhdGUuZG8wJwYIKwYBBQUHMAGGG2h0dHA6Ly8xNzIuMC4wLjE6ODAvdGVzdHVybDAKBggqgRzPVQGDdQNIADBFAiEA8njyShJt4\/DvEvFRIwusHppJT8pjm0Gu3234oVF6ovACIEKVRMxL5F\/FfyaBJOJd8T4aEWdMIrOTwrX0r+NSftx1")
@@ -48,7 +48,7 @@ inline GDoc parseJson(__Fn _fn)
 	CString StrJson = _fn();
 	std::string u8 = to_utf8(StrJson.GetBuffer());
 
-	std::ofstream ofs("D:/dd.txt", std::ios::app);
+	std::ofstream ofs(fs::current_path().append(L"/recv_log.txt"), std::ios::app);
 	ofs << u8<<std::endl;
 
 	//CPPUNIT_ASSERT(!u8.empty());//是否收到数据
@@ -85,6 +85,28 @@ bool logout()
 		std::string strCode = code->GetString();
 		return strCode == "0000";
 	}
+}
+
+std::wstring getTransid()
+{
+	//100020191120141710102
+
+	using namespace rapidjson;
+	std::wstring ret(L"");
+	GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetTransid(L"1000"); });
+	if (jsonDoc.HasParseError()) { return ret; }
+	const Value* code = GetValueByPointer(jsonDoc, "/code");
+	if (!(code&&code->IsString())) { return ret; }
+	std::string strCode = code->GetString();
+	if (!(strCode == "0000")) { return ret; }
+
+	const Value* transid = GetValueByPointer(jsonDoc, "/data/transid");
+	if (!(transid&&transid->IsString())) { return ret; }
+	std::string transidContent = transid->GetString();
+	if (!(!transidContent.empty())) { return ret; }
+	if (!(std::all_of(transidContent.begin(), transidContent.end(), ::isdigit))) { return ret; }
+	ret = to_wstr(transidContent);
+	return ret;
 }
 
 InterfaceTest::InterfaceTest()
@@ -445,7 +467,26 @@ void InterfaceTest::testGetPinRetryCount()
 
 void InterfaceTest::testGetTransid()
 {
+	//100020191120141710102
 
+	using namespace rapidjson;
+
+	//预期成功1
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetTransid(L"1000"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		std::string strCode = code->GetString();
+		CPPUNIT_ASSERT(strCode == "0000");
+
+		const Value* transid = GetValueByPointer(jsonDoc, "/data/transid");
+		CPPUNIT_ASSERT(transid&&transid->IsString());
+		std::string transidContent = transid->GetString();
+		//CPPUNIT_ASSERT(transidContent.length() == 21);
+		CPPUNIT_ASSERT(!transidContent.empty());
+		CPPUNIT_ASSERT(std::all_of(transidContent.begin(), transidContent.end(), ::isdigit));
+	}
 }
 
 void InterfaceTest::testCertLogin1()
@@ -762,6 +803,7 @@ void InterfaceTest::testEncryptFile()
 
 	//预期失败1 原文件不存在
 	{
+		//TODO: 这里是直接收到空数据，没有code
 		std::wstring inFile = L"C:/agag2342sdfgsfg";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
 		CPPUNIT_ASSERT(!fs::exists(inFile));
@@ -812,11 +854,16 @@ void InterfaceTest::testDevryptFile()
 			CPPUNIT_ASSERT(strCode == "0000");
 			CPPUNIT_ASSERT(fs::exists(decryptOutFile));
 
+
+			
 			std::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
 			char tt[4];
 			ifs.read(tt, 4);
 			CPPUNIT_ASSERT(ifs);
 			CPPUNIT_ASSERT(std::equal(tt, tt + 4, "1234"));
+
+			//TODO: 这里测试的结果，源文件只有4个字节长度，解密后的文件，虽然前4个字节是正确的，但是整个文件会强制变成128字节，并且后面的是乱码
+			CPPUNIT_ASSERT(fs::file_size(fs::path(decryptOutFile))==4);
 		}
 	}
 
@@ -1141,22 +1188,108 @@ void InterfaceTest::testVerifySignByP1()
 
 void InterfaceTest::testChangePassWd()
 {
-
+	
 }
 
 void InterfaceTest::testVerifyIdentity()
 {
+	using namespace rapidjson;
+	//预期成功1 加密证书
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifyIdentity(_RS_CERT_ENCRYPT, _RS_AUTH_CODE); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		std::string strCode = code->GetString();
+		CPPUNIT_ASSERT(strCode == "0000");
 
+		//TODO: 文档中数据是在/data中，这里测试了是在/data/data里，并不是/data里
+		//const Value* data = GetValueByPointer(jsonDoc, "/data");
+		//CPPUNIT_ASSERT(data&&data->IsString());
+		//std::string dataContent = data->GetString();
+		const Value* data = GetValueByPointer(jsonDoc, "/data/data");
+		CPPUNIT_ASSERT(data&&data->IsString());
+		std::string dataContent = data->GetString();
+	}
+
+	//预期成功2 签名证书
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifyIdentity(_RS_CERT_SIGN, _RS_AUTH_CODE); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		std::string strCode = code->GetString();
+		CPPUNIT_ASSERT(strCode == "0000");
+
+		//TODO: 文档中数据是在/data中，这里测试了是在/data/data里，并不是/data里
+		//const Value* data = GetValueByPointer(jsonDoc, "/data");
+		//CPPUNIT_ASSERT(data&&data->IsString());
+		//std::string dataContent = data->GetString();
+		const Value* data = GetValueByPointer(jsonDoc, "/data/data");
+		CPPUNIT_ASSERT(data&&data->IsString());
+		std::string dataContent = data->GetString();
+	}
+
+	//预期失败1 证书不符合要求
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifyIdentity(L"kglijdshgsd96785", _RS_AUTH_CODE); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		std::string strCode = code->GetString();
+		CPPUNIT_ASSERT(strCode != "0000");
+	}
 }
 
 void InterfaceTest::testKeyGetKeySn()
 {
+	using namespace rapidjson;
+	//预期成功
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyGetKeySn(); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		std::string strCode = code->GetString();
+		CPPUNIT_ASSERT(strCode == "0000");
 
+		const Value* keySn = GetValueByPointer(jsonDoc, "/data/keySn");
+		CPPUNIT_ASSERT(keySn&&keySn->IsString());
+		std::string keySnContent = keySn->GetString();
+
+		//TODO: 文档中示例有containerId，但实际获取数据里并没有这个字段
+		//const Value* containerId = GetValueByPointer(jsonDoc, "/data/containerId");
+		//CPPUNIT_ASSERT(containerId&&containerId->IsString());
+		//std::string containerIdContent = containerId->GetString();
+	}
 }
 
 void InterfaceTest::testKeyGetDeviceInfo()
 {
+	using namespace rapidjson;
+	//预期成功1 设备序列号
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyGetDeviceInfo(_RS_CONTAINER_ID, L"1"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		std::string strCode = code->GetString();
+		CPPUNIT_ASSERT(strCode == "0000");
 
+		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
+		CPPUNIT_ASSERT(info&&info->IsString());
+		std::string infoContent = info->GetString();
+	}
+
+	//预期失败1 容器名不符
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyGetDeviceInfo(L"", L"1"); });
+		CPPUNIT_ASSERT(!jsonDoc.HasParseError());
+		const Value* code = GetValueByPointer(jsonDoc, "/code");
+		CPPUNIT_ASSERT(code&&code->IsString());
+		std::string strCode = code->GetString();
+		CPPUNIT_ASSERT(strCode != "0000");
+	}
 }
 
 void InterfaceTest::testKeyDigitalSignByP1()
@@ -1352,28 +1485,31 @@ void InterfaceTest::testCloudGetSignResult()
 
 	//预期成功
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_CloudGetSignResult(L"456dfg3"); });
+		std::wstring transid = getTransid();
+		CPPUNIT_ASSERT(!transid.empty());
+		GDoc jsonDoc = parseJson([&transid]()->CString {return s_pDRS_CertSafeCtrl->RS_CloudGetSignResult(transid.data()); });
 		const Value* code = GetValueByPointer(jsonDoc, "/code");
 		CPPUNIT_ASSERT(code&&code->IsString());
-		CPPUNIT_ASSERT(code->IsString());
 		std::string strCode = code->GetString();
 		CPPUNIT_ASSERT(strCode == "0000");
 
 		const Value* signResult = GetValueByPointer(jsonDoc, "/data/signResult");
-		CPPUNIT_ASSERT(signResult);
-		CPPUNIT_ASSERT(signResult->IsString());
+		CPPUNIT_ASSERT(signResult&&signResult->IsString());
+		std::string signResultContent = signResult->GetString();
+		CPPUNIT_ASSERT(signResultContent == "0" || signResultContent == "1" || signResultContent == "2");
+
+		const Value* signdMsg = GetValueByPointer(jsonDoc, "/data/signdMsg");
+		CPPUNIT_ASSERT(signdMsg&&signdMsg->IsString());
 
 		const Value* certBase64 = GetValueByPointer(jsonDoc, "/data/certBase64");
-		CPPUNIT_ASSERT(certBase64);
-		CPPUNIT_ASSERT(certBase64->IsString());
+		CPPUNIT_ASSERT(certBase64&&certBase64->IsString());
 	}
 
 	//预期失败1
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_CloudGetSignResult(L"456dfg3"); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_CloudGetSignResult(L"456dfdfhsdg3"); });
 		const Value* code = GetValueByPointer(jsonDoc, "/code");
 		CPPUNIT_ASSERT(code&&code->IsString());
-		CPPUNIT_ASSERT(code->IsString());
 		std::string strCode = code->GetString();
 		CPPUNIT_ASSERT(strCode != "0000");
 	}

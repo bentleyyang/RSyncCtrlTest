@@ -6,7 +6,7 @@
 class InterfaceTest :public CPPUNIT_NS::TestFixture
 {
 	CPPUNIT_TEST_SUITE(InterfaceTest);
-	CPPUNIT_TEST(test1);
+	//CPPUNIT_TEST(test1);
 	CPPUNIT_TEST(testCertLogin1);
 	CPPUNIT_TEST(testCertLoginNoPwd);
 	CPPUNIT_TEST(testConfigParameters);
