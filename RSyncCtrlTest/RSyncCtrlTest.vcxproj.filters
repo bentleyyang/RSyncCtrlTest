@@ -39,6 +39,24 @@
     <ClInclude Include="Utility.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CommonInterfaceTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UkeyInterfaceTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MobileInterfaceTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonInterfaceNoLoginTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UkeyInterfaceNoLoginTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RSyncCtrlTest.cpp">
@@ -57,6 +75,24 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="InterfaceTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonInterfaceTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UkeyInterfaceTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MobileInterfaceTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonInterfaceNoLoginTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UkeyInterfaceNoLoginTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

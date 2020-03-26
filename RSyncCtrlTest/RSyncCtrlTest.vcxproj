@@ -190,17 +190,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CDRS_CertSafe.h" />
+    <ClInclude Include="CommonInterfaceNoLoginTest.h" />
+    <ClInclude Include="CommonInterfaceTest.h" />
     <ClInclude Include="InterfaceTest.h" />
+    <ClInclude Include="MobileInterfaceTest.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RSyncCtrlTest.h" />
     <ClInclude Include="RSyncCtrlTestDlg.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UkeyInterfaceNoLoginTest.h" />
+    <ClInclude Include="UkeyInterfaceTest.h" />
+    <ClInclude Include="util.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CDRS_CertSafe.cpp" />
+    <ClCompile Include="CommonInterfaceNoLoginTest.cpp" />
+    <ClCompile Include="CommonInterfaceTest.cpp" />
     <ClCompile Include="InterfaceTest.cpp" />
+    <ClCompile Include="MobileInterfaceTest.cpp" />
     <ClCompile Include="RSyncCtrlTest.cpp" />
     <ClCompile Include="RSyncCtrlTestDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -209,6 +218,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="UkeyInterfaceNoLoginTest.cpp" />
+    <ClCompile Include="UkeyInterfaceTest.cpp" />
+    <ClCompile Include="util.cpp" />
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>

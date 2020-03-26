@@ -16,6 +16,7 @@
 #include "cppunit/TestResultCollector.h"
 #include "cppunit/TextOutputter.h"
 
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -128,7 +129,12 @@ BOOL CRSyncCtrlTestApp::InitInstance()
 	CppUnit::MfcTestRunner runner;
 #endif
 
-	runner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
+	//runner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
+	//runner.addTest(InterfaceTestWithLogin::suite());
+	CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry("登录测试");
+	CppUnit::TestFactoryRegistry &registry2 = CppUnit::TestFactoryRegistry::getRegistry("无登录测试(拔掉key)");
+	runner.addTest(registry.makeTest());
+	runner.addTest(registry2.makeTest());
 
 #if CPPUNIT_CMD
 	runner.run(r);
