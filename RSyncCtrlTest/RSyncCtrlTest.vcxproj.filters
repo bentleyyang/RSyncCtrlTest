@@ -57,6 +57,9 @@
     <ClInclude Include="UkeyInterfaceNoLoginTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CDlgPasswd.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RSyncCtrlTest.cpp">
@@ -93,6 +96,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="UkeyInterfaceNoLoginTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CDlgPasswd.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

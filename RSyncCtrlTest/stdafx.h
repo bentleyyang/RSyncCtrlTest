@@ -56,9 +56,14 @@
 
 
 #include "CDRS_CertSafe.h"
+#include <afxcontrolbars.h>
 
 
 extern CString m_PassWord;
+extern CString m_ContainerId;
+extern CString m_AuthCode;
+extern CString m_CertEncrypt;
+extern CString m_CertSign;
 extern CDRS_CertSafe* s_pDRS_CertSafeCtrl;
 extern HWND s_hMainWnd;
 extern CWnd* s_pMainWnd;

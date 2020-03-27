@@ -332,7 +332,7 @@ void CommonInterfaceTest::testGetParameters()
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 
-		const Value* authCode = GetValueByPointer(jsonDoc, "/data/authCode");
+		const Value* authCode = GetValueByPointer(jsonDoc, "/data/authCode");//TODO: 与文档说明的不一致
 		CPPUNIT_ASSERT(authCode&&authCode->IsString());
 	}
 

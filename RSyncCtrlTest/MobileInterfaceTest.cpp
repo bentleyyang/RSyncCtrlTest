@@ -45,6 +45,14 @@ void MobileInterfaceTest::testGetTransid()
 		CPPUNIT_ASSERT(!transidContent.empty());
 		CPPUNIT_ASSERT(std::all_of(transidContent.begin(), transidContent.end(), ::isdigit));
 	}
+
+	//预期失败 joinCode位数不符
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetTransid(L"100000000"); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(hasCode(jsonDoc));
+		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+	}
 }
 
 void MobileInterfaceTest::testCloudLoginAuth()

@@ -189,6 +189,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CDlgPasswd.h" />
     <ClInclude Include="CDRS_CertSafe.h" />
     <ClInclude Include="CommonInterfaceNoLoginTest.h" />
     <ClInclude Include="CommonInterfaceTest.h" />
@@ -205,6 +206,7 @@
     <ClInclude Include="Utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CDlgPasswd.cpp" />
     <ClCompile Include="CDRS_CertSafe.cpp" />
     <ClCompile Include="CommonInterfaceNoLoginTest.cpp" />
     <ClCompile Include="CommonInterfaceTest.cpp" />

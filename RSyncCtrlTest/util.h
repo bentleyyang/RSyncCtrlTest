@@ -14,12 +14,12 @@
 
 #include "Utility.h"
 
-#define _RS_CONTAINER_ID (L"F5BA5CE5-BC9A-49C8-AE47-1825115058D7")
-#define _RS_PASSWD (L"12345678")
-#define _RS_AUTH_CODE (L"")
-#define _RS_CERT_ENCRYPT (L"MIID8jCCA5igAwIBAgILIPOoHk2h3atHMfEwCgYIKoEcz1UBg3UwYjELMAkGA1UEBhMCQ04xJDAiBgNVBAoMG05FVENBIENlcnRpZmljYXRlIEF1dGhvcml0eTEtMCsGA1UEAwwkTkVUQ0EgU00yIFRFU1QwMSBhbmQgRXZhbHVhdGlvbiBDQTAxMB4XDTE5MTEwMTA0NTgyNloXDTI0MTEwMTA0NTgyNlowgdExCzAJBgNVBAYTAkNOMQ8wDQYDVQQIDAZGdWppYW4xMzAxBgNVBAcMKuemj+W7uuecgeemj+W3nuW4gum8k+alvOWMuua5luS4nOi3rzE4OOWPtzE9MDsGA1UECgw056aP5bu655Ge5pyv5L+h5oGv56eR5oqA5pyJ6ZmQ5YWs5Y+477yIU00y5rWL6K+VMu+8iTE9MDsGA1UEAww056aP5bu655Ge5pyv5L+h5oGv56eR5oqA5pyJ6ZmQ5YWs5Y+477yIU00y5rWL6K+VMu+8iTBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABJ1jTugwIT4TlNF2IxsxVxv\/exGmo+Io3Upj\/SJv+epJQgo5ehOjD\/jAMZq413KCqF41gIaS7Ec3BSVNXJsWjvOjggHDMIIBvzAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBT8CyNZp3dl6nPw8AoQTyAVLBKlGDAfBgNVHSMEGDAWgBQMe+ticwN1+oxKJAz2jzshZX4X6TBrBgNVHSAEZDBiMGAGCisGAQQBgZJIDQowUjBQBggrBgEFBQcCARZEaHR0cDovL3d3dy5jbmNhLm5ldC9jcy9rbm93bGVkZ2Uvd2hpdGVwYXBlci9jcHMvbmV0Q0F0ZXN0Y2VydGNwcy5wZGYwMwYDVR0fBCwwKjAooCagJIYiaHR0cDovL3Rlc3QuY25jYS5uZXQvY3JsL1NNMkNBLmNybDAOBgNVHQ8BAf8EBAMCAzgwNAYKKwYBBAGBkkgBDgQmDCQ1MjE2MDc4NmMwYTM3MmZjOGMzMzBhMDJiMTZjYmE2M0BTMDIwgYYGCCsGAQUFBwEBBHoweDBNBggrBgEFBQcwAYZBaHR0cDovLzE5Mi4xNjguMC43OS9vY3NwY29uc29sZS9vY3NwL29jc3BfY2hlY2tfdXNlcmNlcnRfc3RhdGUuZG8wJwYIKwYBBQUHMAGGG2h0dHA6Ly8xNzIuMC4wLjE6ODAvdGVzdHVybDAKBggqgRzPVQGDdQNIADBFAiBUQE+fdAD1eH6OyCuSURjv\/vp+x0MYv8Hkh8S4Ks\/svQIhANdkoJyTiNlij5wckuzhWDJLokcGIyup+y5JYS4xmt7D")
+#define _RS_CONTAINER_ID (m_ContainerId.GetBuffer())
+#define _RS_PASSWD (m_PassWord.GetBuffer())
+#define _RS_AUTH_CODE (m_AuthCode.GetBuffer())
+#define _RS_CERT_ENCRYPT (m_CertEncrypt.GetBuffer())
+#define _RS_CERT_SIGN (m_CertSign.GetBuffer())
 
-#define _RS_CERT_SIGN (L"MIID8jCCA5igAwIBAgILENzv3NBdilQmXGUwCgYIKoEcz1UBg3UwYjELMAkGA1UEBhMCQ04xJDAiBgNVBAoMG05FVENBIENlcnRpZmljYXRlIEF1dGhvcml0eTEtMCsGA1UEAwwkTkVUQ0EgU00yIFRFU1QwMSBhbmQgRXZhbHVhdGlvbiBDQTAxMB4XDTE5MTEwMTA0NTgyNloXDTI0MTEwMTA0NTgyNlowgdExCzAJBgNVBAYTAkNOMQ8wDQYDVQQIDAZGdWppYW4xMzAxBgNVBAcMKuemj+W7uuecgeemj+W3nuW4gum8k+alvOWMuua5luS4nOi3rzE4OOWPtzE9MDsGA1UECgw056aP5bu655Ge5pyv5L+h5oGv56eR5oqA5pyJ6ZmQ5YWs5Y+477yIU00y5rWL6K+VMu+8iTE9MDsGA1UEAww056aP5bu655Ge5pyv5L+h5oGv56eR5oqA5pyJ6ZmQ5YWs5Y+477yIU00y5rWL6K+VMu+8iTBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABJPDjH4qPGIXcKopl6CYXTOqOAE2dmRchTE3TTlDtg7zTPFbe\/fOUFj+zlkUfrLWwopPAJOCA0cG\/ufkffHbhjejggHDMIIBvzAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQJVOszT+dSIPLoT8mIVl01gK37OTAfBgNVHSMEGDAWgBQMe+ticwN1+oxKJAz2jzshZX4X6TBrBgNVHSAEZDBiMGAGCisGAQQBgZJIDQowUjBQBggrBgEFBQcCARZEaHR0cDovL3d3dy5jbmNhLm5ldC9jcy9rbm93bGVkZ2Uvd2hpdGVwYXBlci9jcHMvbmV0Q0F0ZXN0Y2VydGNwcy5wZGYwMwYDVR0fBCwwKjAooCagJIYiaHR0cDovL3Rlc3QuY25jYS5uZXQvY3JsL1NNMkNBLmNybDAOBgNVHQ8BAf8EBAMCBsAwNAYKKwYBBAGBkkgBDgQmDCQ1MjE2MDc4NmMwYTM3MmZjOGMzMzBhMDJiMTZjYmE2M0BTMDIwgYYGCCsGAQUFBwEBBHoweDBNBggrBgEFBQcwAYZBaHR0cDovLzE5Mi4xNjguMC43OS9vY3NwY29uc29sZS9vY3NwL29jc3BfY2hlY2tfdXNlcmNlcnRfc3RhdGUuZG8wJwYIKwYBBQUHMAGGG2h0dHA6Ly8xNzIuMC4wLjE6ODAvdGVzdHVybDAKBggqgRzPVQGDdQNIADBFAiEA8njyShJt4\/DvEvFRIwusHppJT8pjm0Gu3234oVF6ovACIEKVRMxL5F\/FfyaBJOJd8T4aEWdMIrOTwrX0r+NSftx1")
 typedef rapidjson::GenericValue<rapidjson::UTF8<char>> GValue;
 typedef rapidjson::GenericDocument<rapidjson::UTF8<char>> GDoc;
 namespace fs { using namespace std::experimental::filesystem; };
@@ -36,6 +36,20 @@ inline std::wstring to_wstr(const std::string& _u8)
 	std::wstring ret;
 	Poco::UnicodeConverter::toUTF16(_u8, ret);
 	return ret;
+}
+
+template<typename __Ch>
+void split(const std::basic_string<__Ch>& s, std::vector<std::basic_string<__Ch>>& tokens
+	, const std::basic_string<__Ch>& delimiters)
+{
+	std::string::size_type lastPos = s.find_first_not_of(delimiters, 0);
+	std::string::size_type pos = s.find_first_of(delimiters, lastPos);
+	while (std::string::npos!=pos||std::string::npos!=lastPos)
+	{
+		tokens.emplace_back(s.substr(lastPos, pos - lastPos));
+		lastPos = s.find_first_not_of(delimiters, pos);
+		pos = s.find_first_of(delimiters, lastPos);
+	}
 }
 
 template<typename __Fn>
@@ -56,7 +70,11 @@ inline GDoc parseJson(__Fn _fn)
 	return jsonDoc;
 }
 
+std::pair<bool, std::wstring> getParameter(const std::wstring& cmd);
+std::pair<bool, std::wstring> getCertBase64(const std::wstring& containerId, short type);
+bool getUserlist(std::vector<std::pair<std::wstring, std::wstring>>& dst);
 bool login();
+bool login(const std::wstring& pw);
 
 bool logout();
 

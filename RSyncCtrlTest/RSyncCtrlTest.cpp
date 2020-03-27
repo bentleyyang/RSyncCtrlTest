@@ -16,6 +16,8 @@
 #include "cppunit/TestResultCollector.h"
 #include "cppunit/TextOutputter.h"
 
+#include "CDlgPasswd.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -118,40 +120,46 @@ BOOL CRSyncCtrlTestApp::InitInstance()
 
 	MyCreateWindow(MyWndProc, &s_hMainWnd);
 
-	CppUnit::TestResult r;
-	CppUnit::TestResultCollector rc;
-	r.addListener(&rc);
-
-#if CPPUNIT_CMD
-	CppUnit::TestRunner runner;
-#else
-	//CPPUNIT_NS::MfcUi::TestRunner runner;
-	CppUnit::MfcTestRunner runner;
-#endif
-
-	//runner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
-	//runner.addTest(InterfaceTestWithLogin::suite());
-	CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry("登录测试");
-	CppUnit::TestFactoryRegistry &registry2 = CppUnit::TestFactoryRegistry::getRegistry("无登录测试(拔掉key)");
-	runner.addTest(registry.makeTest());
-	runner.addTest(registry2.makeTest());
-
-#if CPPUNIT_CMD
-	runner.run(r);
-#else
-	runner.run();
-#endif
-
-#if CPPUNIT_CMD
-	std::ofstream ofs(fs::current_path().append(L"/test_log.txt"));
-	if (!ofs.is_open())
+	CDlgPasswd dlg;
+	if (dlg.DoModal() == IDOK)
 	{
-		AfxMessageBox(L"无法打开日志文件");
-	}
-	CppUnit::TextOutputter o(&rc, ofs);
-	o.write();
+		CppUnit::TestResult r;
+		CppUnit::TestResultCollector rc;
+		r.addListener(&rc);
+
+#if CPPUNIT_CMD
+		CppUnit::TestRunner runner;
+#else
+		//CPPUNIT_NS::MfcUi::TestRunner runner;
+		CppUnit::MfcTestRunner runner;
+#endif
+
+		//runner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
+		//runner.addTest(InterfaceTestWithLogin::suite());
+		CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry("登录测试");
+		CppUnit::TestFactoryRegistry &registry2 = CppUnit::TestFactoryRegistry::getRegistry("无登录测试(拔掉key)");
+		runner.addTest(registry.makeTest());
+		runner.addTest(registry2.makeTest());
+
+#if CPPUNIT_CMD
+		runner.run(r);
+#else
+		runner.run();
+#endif
+
+#if CPPUNIT_CMD
+		std::ofstream ofs(fs::current_path().append(L"/test_log.txt"));
+		if (!ofs.is_open())
+		{
+			AfxMessageBox(L"无法打开日志文件");
+		}
+		CppUnit::TextOutputter o(&rc, ofs);
+		o.write();
 #else
 #endif
+	}
+
+	
 	
 	MyDestroyWindow();
 	return FALSE;
