@@ -109,7 +109,7 @@ void CDlgPasswd::OnBnClickedOk()
 			//更新密码至配置文件
 			GValue gtmp;
 			gtmp.SetString(to_utf8(m_PassWord.GetBuffer()).data(), jsonDoc.GetAllocator());
-			SetValueByPointer(jsonDoc, "/密码", gtmp);
+			SetValueByPointer(jsonDoc, u8"/密码", gtmp);
 			//SetValueByPointer(jsonDoc, "/password", StringRef(to_utf8(m_PassWord.GetBuffer()).data()));
 		}
 
@@ -189,14 +189,14 @@ BOOL CDlgPasswd::OnInitDialog()
 
 		jsonDoc.Parse(u8.data());
 		if (jsonDoc.HasParseError()) { AfxMessageBox(L"config.json解析错误"); return exitFn(); }
-		const Value* token_login = GetValueByPointer(jsonDoc, "/token/登录token");
-		const Value* token_encrypt = GetValueByPointer(jsonDoc, "/token/加密token");
-		const Value* token_decrypt = GetValueByPointer(jsonDoc, "/token/解密token");
-		const Value* token_seal = GetValueByPointer(jsonDoc, "/token/签章token");
-		const Value* token_cert = GetValueByPointer(jsonDoc, "/token/证书token");
-		const Value* password = GetValueByPointer(jsonDoc, "/密码");
-		const Value* authCode = GetValueByPointer(jsonDoc, "/授权码");
-		const Value* rsigncloud = GetValueByPointer(jsonDoc, "/服务器地址");
+		const Value* token_login = GetValueByPointer(jsonDoc, u8"/token/登录token");
+		const Value* token_encrypt = GetValueByPointer(jsonDoc, u8"/token/加密token");
+		const Value* token_decrypt = GetValueByPointer(jsonDoc, u8"/token/解密token");
+		const Value* token_seal = GetValueByPointer(jsonDoc, u8"/token/签章token");
+		const Value* token_cert = GetValueByPointer(jsonDoc, u8"/token/证书token");
+		const Value* password = GetValueByPointer(jsonDoc, u8"/密码");
+		const Value* authCode = GetValueByPointer(jsonDoc, u8"/授权码");
+		const Value* rsigncloud = GetValueByPointer(jsonDoc, u8"/服务器地址");
 		if (!token_login || !token_encrypt || !token_decrypt || !token_seal || !token_cert || !password
 			|| !authCode || !rsigncloud) {
 			AfxMessageBox(L"config.json解析错误"); return exitFn();
