@@ -24,7 +24,43 @@ void CommonTestAuto::tearDown()
 void CommonTestAuto::testGetCertInfo()
 {
 	using namespace rapidjson;
+	//Ô¤ÆÚÊ§°Ü type²»·û
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(L"", L"1"); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc)=="9005");
+	}
 
+	//Ô¤ÆÚ³É¹¦
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"1"); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(hasCode(jsonDoc));
+		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+	}
+
+	//Ô¤ÆÚÊ§°Ü type²»·û
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L""); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9015");
+	}
+
+	//Ô¤ÆÚÊ§°Ü
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(L"123456", L"1"); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9006");
+	}
+
+	//Ô¤ÆÚÊ§°Ü
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"123456"); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9016");
+	}
+
+#if UNNECISSARY_ASSERT
 	//Ô¤ÆÚÊ§°Ü1 type²»·û
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"-1"); });
@@ -216,6 +252,7 @@ void CommonTestAuto::testGetCertInfo()
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
+#endif
 
 }
 

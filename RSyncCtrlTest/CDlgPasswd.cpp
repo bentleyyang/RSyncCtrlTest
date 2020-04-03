@@ -28,7 +28,13 @@ void CDlgPasswd::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT1, m_etPw);
-	DDX_Text(pDX, IDC_EDIT1, m_strPw);
+	DDX_Control(pDX, IDC_EDIT2, m_etAuthCode);
+	DDX_Control(pDX, IDC_EDIT3, m_etCloudUrl);
+	DDX_Control(pDX, IDC_EDIT4, m_etTokenLogin);
+	DDX_Control(pDX, IDC_EDIT5, m_etTokenEncrypt);
+	DDX_Control(pDX, IDC_EDIT6, m_etTokenDecrypt);
+	DDX_Control(pDX, IDC_EDIT7, m_etTokenSeal);
+	DDX_Control(pDX, IDC_EDIT8, m_etTokenCert);
 }
 
 
@@ -43,56 +49,25 @@ END_MESSAGE_MAP()
 void CDlgPasswd::OnBnClickedOk()
 {
 	// TODO: 在此添加控件通知处理程序代码
+
 	GetDlgItemText(IDC_EDIT1, m_strPw);
+	GetDlgItemText(IDC_EDIT2, m_strAuthCode);
+	GetDlgItemText(IDC_EDIT3, m_strCloudUrl);
+	GetDlgItemText(IDC_EDIT4, m_strTokenLogin);
+	GetDlgItemText(IDC_EDIT5, m_strTokenEncrypt);
+	GetDlgItemText(IDC_EDIT6, m_strTokenDecrypt);
+	GetDlgItemText(IDC_EDIT7, m_strTokenSeal);
+	GetDlgItemText(IDC_EDIT8, m_strTokenCert);
 
-	using namespace rapidjson;
-	GDoc jsonDoc;//配置文件
-	fs::path path_conf = fs::path(fs::current_path().append("/config.json"));
+	m_PassWord = m_strPw;
+	m_AuthCode = m_strAuthCode;
+	m_RsignCloud = m_strCloudUrl;
+	m_TokenLogin = m_strTokenLogin;
+	m_TokenEncrypt = m_strTokenEncrypt;
+	m_TokenDecrypt = m_strTokenDecrypt;
+	m_TokenSeal = m_strTokenSeal;
+	m_TokenCert = m_strTokenCert;
 
-	
-	{
-		//手机云证等参数读取
-		std::error_code ec;
-		uint64_t len=fs::file_size(path_conf, ec);
-		if (ec) { AfxMessageBox(L"config.json不存在"); return; }
-		std::vector<char> u8(len+1, '\0');
-		fs::ifstream ifs(path_conf, std::ios::binary);
-		ifs.read(u8.data(), len);
-		if (ifs.fail()) { AfxMessageBox(L"config.json读取错误"); return; }
-		
-		jsonDoc.Parse(u8.data());
-		if (jsonDoc.HasParseError()) { AfxMessageBox(L"config.json读取错误"); return; }
-		const Value* token_login = GetValueByPointer(jsonDoc, "/token/登录token");
-		const Value* token_encrypt = GetValueByPointer(jsonDoc, "/token/加密token");
-		const Value* token_decrypt = GetValueByPointer(jsonDoc, "/token/解密token");
-		const Value* token_seal = GetValueByPointer(jsonDoc, "/token/签章token");
-		const Value* token_cert = GetValueByPointer(jsonDoc, "/token/证书token");
-		const Value* password = GetValueByPointer(jsonDoc, "/密码");
-		const Value* authCode = GetValueByPointer(jsonDoc, "/授权码");
-		const Value* rsigncloud = GetValueByPointer(jsonDoc, "/服务器地址");
-		if (!token_login||!token_encrypt || !token_decrypt||!token_seal||!token_cert||!password
-			||!authCode||!rsigncloud) { AfxMessageBox(L"config.json读取错误"); return; }
-
-		m_TokenLogin = to_wstr(token_login->GetString()).data();
-		m_TokenEncrypt = to_wstr(token_encrypt->GetString()).data();
-		m_TokenDecrypt = to_wstr(token_decrypt->GetString()).data();
-		m_TokenSeal = to_wstr(token_seal->GetString()).data();
-		m_TokenCert = to_wstr(token_cert->GetString()).data();
-		m_PassWord = to_wstr(password->GetString()).data();
-		m_AuthCode = to_wstr(authCode->GetString()).data();
-		m_RsignCloud = to_wstr(rsigncloud->GetString()).data();
-
-	}
-
-	{
-		//获取证书列表
-		auto seallist = getSealList();
-		if (!seallist.first) { AfxMessageBox(L"获取签章列表失败"); return; }
-		else if (seallist.second.empty()) { AfxMessageBox(L"签章列表为空"); return; }
-		else { m_SealList = seallist.second; }
-	}
-
-#if 1
 	{
 		//获取ukey的containerId
 		std::vector < std::pair<std::wstring, std::wstring> > userLists;
@@ -112,11 +87,16 @@ void CDlgPasswd::OnBnClickedOk()
 		}
 	}
 
-
-	if (!m_strPw.IsEmpty())
 	{
-		m_PassWord = m_strPw;
+		//获取证书列表
+		auto seallist = getSealList();
+		if (!seallist.first) { AfxMessageBox(L"获取签章列表失败"); return; }
+		else if (seallist.second.empty()) { AfxMessageBox(L"签章列表为空"); return; }
+		else { m_SealList = seallist.second; }
 	}
+
+	using namespace rapidjson;
+	fs::path path_conf = fs::path(fs::current_path().append("/config.json"));
 
 	if (!login(m_PassWord.GetBuffer()))
 	{
@@ -124,7 +104,6 @@ void CDlgPasswd::OnBnClickedOk()
 		return;
 	}
 	else
-#endif
 	{
 		{
 			//更新密码至配置文件
@@ -133,18 +112,16 @@ void CDlgPasswd::OnBnClickedOk()
 			SetValueByPointer(jsonDoc, "/密码", gtmp);
 			//SetValueByPointer(jsonDoc, "/password", StringRef(to_utf8(m_PassWord.GetBuffer()).data()));
 		}
-		
 
-	
+
+
 
 		{
 			//设置参数至底层
 			if (!setParameter(L"authCode", m_AuthCode.GetBuffer())) { AfxMessageBox(L"设置authcode失败"); return; }
 			if (!setParameter(L"rsigncloud", m_RsignCloud.GetBuffer())) { AfxMessageBox(L"设置rsigncloud失败"); return; }
 		}
-		
 
-#if 1
 		{
 			//获取certbase64
 			auto certbase64 = getCertBase64(m_ContainerId.GetBuffer(), 1);
@@ -169,20 +146,19 @@ void CDlgPasswd::OnBnClickedOk()
 				m_CertEncrypt = certbase64.second.data();
 			}
 		}
-#endif
-		
+
 
 		{
 			//保存配置文件
 			std::error_code ec;
 			fs::copy_file(path_conf.wstring(), path_conf.wstring() + L".bac", fs::copy_options::overwrite_existing, ec);
-			if(ec){ AfxMessageBox(L"config.json备份错误"); return; }
+			if (ec) { AfxMessageBox(L"config.json备份错误"); return; }
 			std::string to_write = jsonDocToStr(jsonDoc);
 			fs::ofstream ofs(path_conf, std::ios::binary);
 			ofs.write(to_write.data(), to_write.length());
 			if (ofs.fail()) { AfxMessageBox(L"config.json写入错误"); return; }
 		}
-		
+
 	}
 	CDialogEx::OnOK();
 }
@@ -196,8 +172,57 @@ CString CDlgPasswd::getPw()
 BOOL CDlgPasswd::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+	auto exitFn = [this]()->BOOL {CDialogEx::OnCancel(); return TRUE; };
 
-	// TODO:  在此添加额外的初始化
+	using namespace rapidjson;
+	fs::path path_conf = fs::path(fs::current_path().append("/config.json"));
+
+	{
+		//手机云证等参数读取
+		std::error_code ec;
+		uint64_t len = fs::file_size(path_conf, ec);
+		if (ec) { AfxMessageBox(L"config.json不存在"); return exitFn(); }
+		std::vector<char> u8(len + 1, '\0');
+		fs::ifstream ifs(path_conf, std::ios::binary);
+		ifs.read(u8.data(), len);
+		if (ifs.fail()) { AfxMessageBox(L"config.json读取错误"); return exitFn(); }
+
+		jsonDoc.Parse(u8.data());
+		if (jsonDoc.HasParseError()) { AfxMessageBox(L"config.json解析错误"); return exitFn(); }
+		const Value* token_login = GetValueByPointer(jsonDoc, "/token/登录token");
+		const Value* token_encrypt = GetValueByPointer(jsonDoc, "/token/加密token");
+		const Value* token_decrypt = GetValueByPointer(jsonDoc, "/token/解密token");
+		const Value* token_seal = GetValueByPointer(jsonDoc, "/token/签章token");
+		const Value* token_cert = GetValueByPointer(jsonDoc, "/token/证书token");
+		const Value* password = GetValueByPointer(jsonDoc, "/密码");
+		const Value* authCode = GetValueByPointer(jsonDoc, "/授权码");
+		const Value* rsigncloud = GetValueByPointer(jsonDoc, "/服务器地址");
+		if (!token_login || !token_encrypt || !token_decrypt || !token_seal || !token_cert || !password
+			|| !authCode || !rsigncloud) {
+			AfxMessageBox(L"config.json解析错误"); return exitFn();
+		}
+
+		m_TokenLogin = to_wstr(token_login->GetString()).data();
+		m_TokenEncrypt = to_wstr(token_encrypt->GetString()).data();
+		m_TokenDecrypt = to_wstr(token_decrypt->GetString()).data();
+		m_TokenSeal = to_wstr(token_seal->GetString()).data();
+		m_TokenCert = to_wstr(token_cert->GetString()).data();
+		m_PassWord = to_wstr(password->GetString()).data();
+		m_AuthCode = to_wstr(authCode->GetString()).data();
+		m_RsignCloud = to_wstr(rsigncloud->GetString()).data();
+
+	}
+
+	{
+		SetDlgItemText(IDC_EDIT1, m_PassWord);
+		SetDlgItemText(IDC_EDIT2, m_AuthCode);
+		SetDlgItemText(IDC_EDIT3, m_RsignCloud);
+		SetDlgItemText(IDC_EDIT4, m_TokenLogin);
+		SetDlgItemText(IDC_EDIT5, m_TokenEncrypt);
+		SetDlgItemText(IDC_EDIT6, m_TokenDecrypt);
+		SetDlgItemText(IDC_EDIT7, m_TokenSeal);
+		SetDlgItemText(IDC_EDIT8, m_TokenCert);
+	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE

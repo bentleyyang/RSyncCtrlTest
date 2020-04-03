@@ -147,3 +147,16 @@ void SpecificTest::testKeyGetKeySnTwoKey()
 		CPPUNIT_ASSERT(getCode(jsonDoc) == "9002");
 	}
 }
+
+void SpecificTest::testKeyEncryptDataTwoKey()
+{
+#if TEST_WITH_INFO_POPUP
+	AfxMessageBox(L"请确保同时插入2把key后继续");
+#endif
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(L"123456aAX", _RS_CERT_ENCRYPT); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9030");
+	}
+}

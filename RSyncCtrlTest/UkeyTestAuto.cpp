@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "UkeyTestAuto.h"
 #include "util.h"
 
@@ -25,7 +25,7 @@ void UkeyTestAuto::tearDown()
 void UkeyTestAuto::testGetUserList()
 {
 	using namespace rapidjson;
-	//Ԥ�ڳɹ�1
+	//预期成功1
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetUserList(); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -37,7 +37,7 @@ void UkeyTestAuto::testGetUserList()
 		std::wstring userlistContent = to_wstr(userlist->GetString());
 	}
 
-	//Ԥ��ʧ��
+	//预期失败
 	{
 
 	}
@@ -46,7 +46,7 @@ void UkeyTestAuto::testGetCertBase64String()
 {
 	using namespace rapidjson;
 
-	//Ԥ�ڳɹ�1
+	//预期成功1
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(_RS_CONTAINER_ID, 1); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -58,7 +58,7 @@ void UkeyTestAuto::testGetCertBase64String()
 		std::string certBase64Content = certBase64->GetString();
 	}
 
-	//Ԥ�ڳɹ�2
+	//预期成功2
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(_RS_CONTAINER_ID, 2); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -70,20 +70,75 @@ void UkeyTestAuto::testGetCertBase64String()
 		std::string certBase64Content = certBase64->GetString();
 	}
 
-	//Ԥ��ʧ��1 type����Ҫ��
+	//预期失败
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(_RS_CONTAINER_ID, -9); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(L"", 1); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc)=="9003");
 	}
 
-	//Ԥ��ʧ��2 ֤�鲻��
+	//预期失败
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(L"@$^%^%$fd", 2); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(L"", 2); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9003");
+	}
+
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(L"123456", 1); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9004");
+	}
+
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(L"123456", 2); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9004");
+	}
+
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(L"B2810FDB-B11C-4D78-", 1); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9004");
+	}
+
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(L"B2810FDB-B11C-4D78-", 2); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9004");
+	}
+
+	//预期失败 type不符要求
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(_RS_CONTAINER_ID, 3); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9012");
+	}
+
+	//预期失败 type不符要求
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(_RS_CONTAINER_ID, 0); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9012");
+	}
+
+	//预期失败 type不符要求
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(_RS_CONTAINER_ID, -1); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9012");
+	}
+
+	//预期失败 type不符要求
+	{
+		short type;
+		GDoc jsonDoc = parseJson([&type]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(_RS_CONTAINER_ID, type); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9012");
 	}
 }
 
@@ -91,7 +146,7 @@ void UkeyTestAuto::testCertLogin()
 {
 	using namespace rapidjson;
 
-	//Ԥ�ڳɹ�1
+	//预期成功
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_CertLogin(_RS_CONTAINER_ID, _RS_PASSWD); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -99,12 +154,39 @@ void UkeyTestAuto::testCertLogin()
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 	}
 
-	//Ԥ��ʧ��1
+	//预期失败
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_CertLogin(_RS_CONTAINER_ID, L"$%^@$^DSFGSA@#$%"); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_CertLogin(L"", _RS_PASSWD); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		CPPUNIT_ASSERT_MESSAGE("code==9003", getCode(jsonDoc)=="9003");
+	}
+
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_CertLogin(L"123456", _RS_PASSWD); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT_MESSAGE("code==9004", getCode(jsonDoc) == "9004");
+	}
+
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_CertLogin(L"B2810FDB-B11C-4D78-", _RS_PASSWD); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT_MESSAGE("code==9004", getCode(jsonDoc) == "9004");
+	}
+
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_CertLogin(_RS_CONTAINER_ID, L""); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT_MESSAGE("code==9010", getCode(jsonDoc) == "9010");
+	}
+
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_CertLogin(_RS_CONTAINER_ID, L"0"); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT_MESSAGE("code==9011", getCode(jsonDoc) == "9011");
 	}
 }
 
@@ -112,7 +194,7 @@ void UkeyTestAuto::testGetPinRetryCount()
 {
 	using namespace rapidjson;
 
-	//Ԥ�ڳɹ�1
+	//预期成功1
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetPinRetryCount(_RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -126,7 +208,7 @@ void UkeyTestAuto::testGetPinRetryCount()
 		CPPUNIT_ASSERT(std::all_of(retryCountContent.begin(), retryCountContent.end(), ::isdigit));
 	}
 
-	//Ԥ��ʧ��1 ֤�鲻��
+	//预期失败1 证书不符
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetPinRetryCount(L"@$^%^%$fd"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -140,7 +222,7 @@ void UkeyTestAuto::testKeySignByP7()
 	using namespace rapidjson;
 
 	CPPUNIT_ASSERT(login());
-	//Ԥ�ڳɹ�1 ����ԭ��
+	//预期成功1 不带原文
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"1", _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -152,7 +234,7 @@ void UkeyTestAuto::testKeySignByP7()
 		std::string tt = signdMsg->GetString();
 	}
 
-	//Ԥ�ڳɹ�2 ��ԭ��
+	//预期成功2 带原文
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"0", _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -164,7 +246,7 @@ void UkeyTestAuto::testKeySignByP7()
 		std::string tt = signdMsg->GetString();
 	}
 
-	//Ԥ��ʧ��1 container_id ����
+	//预期失败1 container_id 不符
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"1", L"random-45634562456"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -178,7 +260,7 @@ void UkeyTestAuto::testKeySignByP1()
 	using namespace rapidjson;
 
 	CPPUNIT_ASSERT(login());
-	//Ԥ�ڳɹ�1
+	//预期成功1
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(TEST_DATA_W, _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -190,7 +272,7 @@ void UkeyTestAuto::testKeySignByP1()
 		std::string tt = signdMsg->GetString();
 	}
 
-	//Ԥ��ʧ��1 container_id ����
+	//预期失败1 container_id 不符
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(TEST_DATA_W, L"random-45634562456"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -205,9 +287,9 @@ void UkeyTestAuto::testVerifySignByP1()
 
 	CPPUNIT_ASSERT(login());
 
-	//Ԥ�ڳɹ�1
+	//预期成功1
 	{
-		//��ȡsignedMsg
+		//获取signedMsg
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(TEST_DATA_W, _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
@@ -225,9 +307,9 @@ void UkeyTestAuto::testVerifySignByP1()
 		}
 	}
 
-	//Ԥ��ʧ��1 ǩ��֤���ʽ����
+	//预期失败1 签名证书格式错误
 	{
-		//��ȡsignedMsg
+		//获取signedMsg
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(TEST_DATA_W, _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
@@ -245,9 +327,9 @@ void UkeyTestAuto::testVerifySignByP1()
 		}
 	}
 
-	//Ԥ��ʧ��2 ��ǩ��ԭ�Ĳ���
+	//预期失败2 代签名原文不符
 	{
-		//��ȡsignedMsg
+		//获取signedMsg
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(TEST_DATA_W, _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
@@ -265,7 +347,7 @@ void UkeyTestAuto::testVerifySignByP1()
 		}
 	}
 
-	//Ԥ��ʧ��2 ǩ��ֵ����
+	//预期失败2 签名值不符
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP1(_RS_CERT_SIGN, TEST_DATA_W, L"#^@&^$d"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -280,7 +362,7 @@ void UkeyTestAuto::testChangePassWd()
 
 	using namespace rapidjson;
 
-	//�Ȼ�ȡ���Դ�������֤������ס
+	//先获取重试次数，保证不被锁住
 	{
 		auto retryCount = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetPinRetryCount(_RS_CONTAINER_ID); }, "/data/retryCount");
 		CPPUNIT_ASSERT(retryCount.first);
@@ -292,7 +374,7 @@ void UkeyTestAuto::testChangePassWd()
 
 	}
 
-	//Ԥ�ڳɹ�1
+	//预期成功1
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ChangePassWd(_RS_CONTAINER_ID, _RS_PASSWD, L"87654321"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -300,7 +382,7 @@ void UkeyTestAuto::testChangePassWd()
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 	}
 
-	//Ԥ��ʧ�� containerId ����
+	//预期失败 containerId 错误
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ChangePassWd(L"AAAAAAA123", L"87654321", _RS_PASSWD); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -308,7 +390,7 @@ void UkeyTestAuto::testChangePassWd()
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
 	}
 
-	//Ԥ��ʧ�� ԭ�������
+	//预期失败 原密码错误
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ChangePassWd(_RS_CONTAINER_ID, L"#&%&H", _RS_PASSWD); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -316,7 +398,7 @@ void UkeyTestAuto::testChangePassWd()
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
 	}
 
-	//Ԥ�ڳɹ����Ļس�ʼ����
+	//预期成功，改回初始密码
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ChangePassWd(_RS_CONTAINER_ID, L"87654321", _RS_PASSWD); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -328,14 +410,14 @@ void UkeyTestAuto::testChangePassWd()
 void UkeyTestAuto::testVerifyIdentity()
 {
 	using namespace rapidjson;
-	//Ԥ�ڳɹ�1 ����֤��
+	//预期成功1 加密证书
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifyIdentity(_RS_CERT_ENCRYPT, _RS_AUTH_CODE); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 
-		//TODO: �ĵ�����������/data�У��������������/data/data�������/data��
+		//TODO: 文档中数据是在/data中，这里测试了是在/data/data里，并不是/data里
 		//const Value* data = GetValueByPointer(jsonDoc, "/data");
 		//CPPUNIT_ASSERT(data&&data->IsString());
 		//std::string dataContent = data->GetString();
@@ -344,14 +426,14 @@ void UkeyTestAuto::testVerifyIdentity()
 		std::string dataContent = data->GetString();
 	}
 
-	//Ԥ�ڳɹ�2 ǩ��֤��
+	//预期成功2 签名证书
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifyIdentity(_RS_CERT_SIGN, _RS_AUTH_CODE); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 
-		//TODO: �ĵ�����������/data�У��������������/data/data�������/data��
+		//TODO: 文档中数据是在/data中，这里测试了是在/data/data里，并不是/data里
 		//const Value* data = GetValueByPointer(jsonDoc, "/data");
 		//CPPUNIT_ASSERT(data&&data->IsString());
 		//std::string dataContent = data->GetString();
@@ -360,7 +442,7 @@ void UkeyTestAuto::testVerifyIdentity()
 		std::string dataContent = data->GetString();
 	}
 
-	//Ԥ��ʧ��1 ֤�鲻����Ҫ��
+	//预期失败1 证书不符合要求
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifyIdentity(L"kglijdshgsd96785", _RS_AUTH_CODE); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -372,7 +454,15 @@ void UkeyTestAuto::testVerifyIdentity()
 void UkeyTestAuto::testKeyGetKeySn()
 {
 	using namespace rapidjson;
-	//Ԥ�ڳɹ�
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyGetKeySn(); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(hasCode(jsonDoc));
+		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+	}
+
+#if UNNECISSARY_ASSERT
+	//预期成功
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyGetKeySn(); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -383,17 +473,18 @@ void UkeyTestAuto::testKeyGetKeySn()
 		CPPUNIT_ASSERT(keySn&&keySn->IsString());
 		std::string keySnContent = keySn->GetString();
 
-		//TODO: �ĵ���ʾ����containerId����ʵ�ʻ�ȡ�����ﲢû������ֶ�
+		//TODO: 文档中示例有containerId，但实际获取数据里并没有这个字段
 		//const Value* containerId = GetValueByPointer(jsonDoc, "/data/containerId");
 		//CPPUNIT_ASSERT(containerId&&containerId->IsString());
 		//std::string containerIdContent = containerId->GetString();
 	}
+#endif
 }
 
 void UkeyTestAuto::testKeyGetDeviceInfo()
 {
 	using namespace rapidjson;
-	//Ԥ�ڳɹ�1 �豸���к�
+	//预期成功1 设备序列号
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyGetDeviceInfo(_RS_CONTAINER_ID, L"1"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -405,7 +496,7 @@ void UkeyTestAuto::testKeyGetDeviceInfo()
 		std::string infoContent = info->GetString();
 	}
 
-	//Ԥ��ʧ��1 ����������
+	//预期失败1 容器名不符
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyGetDeviceInfo(L"", L"1"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -427,7 +518,41 @@ void UkeyTestAuto::testVerifyDigitalSignByP1()
 void UkeyTestAuto::testKeyEncryptData()
 {
 	using namespace rapidjson;
-	//Ԥ�ڳɹ�1
+
+	//登录
+	CPPUNIT_ASSERT(login());
+
+	//预期成功
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(L"123456aAX", _RS_CERT_ENCRYPT); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(hasCode(jsonDoc));
+		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+	}
+
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(L"123456aAX", L""); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc)=="9005");
+	}
+
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(L"", _RS_CERT_ENCRYPT); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9023");
+	}
+
+	//预期失败
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(L"123456aAX", L"123456"); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9024");
+	}
+
+#if UNNECISSARY_ASSERT
+	//预期成功1
 	{
 		auto encRsKey = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(TEST_DATA_W, _RS_CERT_ENCRYPT); }, "/data/encRsKey");
 		CPPUNIT_ASSERT(encRsKey.first);
@@ -435,19 +560,20 @@ void UkeyTestAuto::testKeyEncryptData()
 		CPPUNIT_ASSERT(!encRsKeyContent.empty());
 	}
 
-	//Ԥ��ʧ��1 ֤�鲻��
+	//预期失败1 证书不符
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(TEST_DATA_W, L"#$@sdf"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
 	}
+#endif
 }
 
 void UkeyTestAuto::testKeyDecryptData()
 {
 	using namespace rapidjson;
-	//Ԥ�ڳɹ�1
+	//预期成功1
 	{
 		auto encRsKey = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(TEST_DATA_W, _RS_CERT_ENCRYPT); }, "/data/encRsKey");
 		CPPUNIT_ASSERT(encRsKey.first);
@@ -462,7 +588,7 @@ void UkeyTestAuto::testKeyDecryptData()
 		}
 	}
 
-	//Ԥ��ʧ��1 ���������Ĳ���
+	//预期失败1 待解密密文不符
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyDecryptData(L"sdflk76585", _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -470,7 +596,7 @@ void UkeyTestAuto::testKeyDecryptData()
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
 	}
 
-	//Ԥ��ʧ��1 containerId����
+	//预期失败1 containerId不符
 	{
 		auto encRsKey = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(TEST_DATA_W, _RS_CERT_ENCRYPT); }, "/data/encRsKey");
 		CPPUNIT_ASSERT(encRsKey.first);
@@ -490,7 +616,7 @@ void UkeyTestAuto::testKeyEncryptFile()
 {
 	using namespace rapidjson;
 
-	//Ԥ�ڳɹ�1
+	//预期成功1
 	{
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
@@ -509,9 +635,9 @@ void UkeyTestAuto::testKeyEncryptFile()
 		CPPUNIT_ASSERT(fs::exists(outFile));
 	}
 
-	//Ԥ��ʧ��1 ԭ�ļ�������
+	//预期失败1 原文件不存在
 	{
-		//TODO: ������ֱ���յ������ݣ�û��code
+		//TODO: 这里是直接收到空数据，没有code
 		std::wstring inFile = L"C:/agag2342sdfgsfg";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
 		CPPUNIT_ASSERT(!fs::exists(inFile));
@@ -526,7 +652,7 @@ void UkeyTestAuto::testKeyDecryptFile()
 {
 	using namespace rapidjson;
 
-	//Ԥ�ڳɹ�1
+	//预期成功1
 	{
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
@@ -558,7 +684,7 @@ void UkeyTestAuto::testKeyDecryptFile()
 			CPPUNIT_ASSERT(ifs);
 			CPPUNIT_ASSERT(std::equal(tt, tt + (sizeof(TEST_DATA) - 1), TEST_DATA));
 
-			//TODO: ������ԵĽ����Դ�ļ�ֻ��4���ֽڳ��ȣ����ܺ���ļ�����Ȼǰ4���ֽ�����ȷ�ģ����������ļ���ǿ�Ʊ��128�ֽڣ����Һ����������
+			//TODO: 这里测试的结果，源文件只有4个字节长度，解密后的文件，虽然前4个字节是正确的，但是整个文件会强制变成128字节，并且后面的是乱码
 			CPPUNIT_ASSERT(fs::file_size(fs::path(decryptOutFile)) == (sizeof(TEST_DATA) - 1));
 		}
 	}
@@ -576,21 +702,21 @@ void UkeyTestAuto::testKeyDecryptByDigitalEnvelope()
 
 
 /*
-������
-	containerId:������
-���أ�Json��ʽ���ַ���
-	����
-	{"code":"0000","msg":"ִ�гɹ���","data":""}
-���ܣ���ȡָ������key�Ĵ�״̬��codeֵΪ0000��ʾ�ѵ�¼����0000��ʾδ��¼��
+参数：
+	containerId:容器名
+返回：Json格式的字符串
+	例：
+	{"code":"0000","msg":"执行成功。","data":""}
+功能：获取指定介质key的打开状态，code值为0000表示已登录，非0000表示未登录。
 */
 void UkeyTestAuto::testKeyStatus()
 {
-	//Ԥ�ڳɹ�1
+	//预期成功1
 	{
 		CPPUNIT_ASSERT(login());
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyStatus(_RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));//������ԵĽ��Ӧ����0000��δ��¼���Ӧ�÷�0000
+		CPPUNIT_ASSERT(isSuccessful(jsonDoc));//这里测试的结果应该是0000，未登录情况应该非0000
 	}
 }

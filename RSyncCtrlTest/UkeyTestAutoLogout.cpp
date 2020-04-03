@@ -18,3 +18,14 @@ void UkeyTestAutoLogout::setUp()
 void UkeyTestAutoLogout::tearDown()
 {
 }
+
+void UkeyTestAutoLogout::testKeyEncryptData()
+{
+	using namespace rapidjson;
+	//Ô¤ÆÚÊ§°Ü
+	{
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(L"123456aAX", _RS_CERT_ENCRYPT); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(getCode(jsonDoc) == "9030");
+	}
+}

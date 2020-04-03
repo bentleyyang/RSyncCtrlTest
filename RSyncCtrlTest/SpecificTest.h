@@ -14,6 +14,7 @@ class SpecificTest :public CPPUNIT_NS::TestFixture
 	CPPUNIT_TEST(testGetCertBase64StringTwoKey );
 	CPPUNIT_TEST(testKeyGetKeySnNoKey );
 	CPPUNIT_TEST(testKeyGetKeySnTwoKey );
+	CPPUNIT_TEST(testKeyEncryptDataTwoKey);
 	CPPUNIT_TEST_SUITE_END();
 public:
 	SpecificTest();
@@ -34,5 +35,8 @@ public:
 
 	void testKeyGetKeySnNoKey();
 	void testKeyGetKeySnTwoKey();
+
+	void testKeyEncryptDataTwoKey();
+
 };
 

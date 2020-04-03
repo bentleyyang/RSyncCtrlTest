@@ -4,6 +4,7 @@
 class UkeyTestAutoLogout :public CPPUNIT_NS::TestFixture
 {
 	CPPUNIT_TEST_SUITE(UkeyTestAutoLogout);
+	CPPUNIT_TEST(testKeyEncryptData);
 	CPPUNIT_TEST_SUITE_END();
 public:
 	UkeyTestAutoLogout();
@@ -12,5 +13,6 @@ public:
 	void setUp();
 	void tearDown();
 public:
+	void testKeyEncryptData();
 };
 
