@@ -53,10 +53,35 @@
 #endif
 #endif
 
+#include <vector>
 
-
+#include "util.h"
 #include "CDRS_CertSafe.h"
 #include <afxcontrolbars.h>
+#include <afxcontrolbars.h>
+
+#define REGISTRY_NAME_AUTO "自动化测试部分"
+#define REGISTRY_NAME_MANUAL "手动测试部分"
+#define REGISTRY_NAME_LOGIN "登录测试"
+#define REGISTRY_NAME_LOGOUT "无登录测试(插拔key一次)"
+
+#define REGISTRY_NAME_AUTO_LOGIN "登录测试(自动测试)"
+#define REGISTRY_NAME_MANUAL_LOGIN "登录测试(手动测试)"
+#define REGISTRY_NAME_AUTO_LOGOUT "无登录测试(插拔key一次)(自动测试)"
+#define REGISTRY_NAME_MANUAL_LOGOUT "无登录测试(插拔key一次)(手动测试)"
+
+#define TEST 0
+#define TEST_WITH_INFO_POPUP 1
+#define CPPUNIT_CSL 0//CPPUNIT无界面版，并且有测试log
+#define UNNECISSARY_ASSERT 0//暂时不用考虑的断言
+
+#define TEST_DATA "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"//待测试数据（十个数字和26个字母大小写）
+#define TEST_DATA_W L"1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"//待测试数据（十个数字和26个字母大小写）
+#define _RS_CONTAINER_ID (m_ContainerId.GetBuffer())//containerId
+#define _RS_PASSWD (m_PassWord.GetBuffer())
+#define _RS_AUTH_CODE (m_AuthCode.GetBuffer())
+#define _RS_CERT_ENCRYPT (m_CertEncrypt.GetBuffer())//加密证书
+#define _RS_CERT_SIGN (m_CertSign.GetBuffer())//签名证书
 
 
 extern CString m_PassWord;
@@ -64,7 +89,19 @@ extern CString m_ContainerId;
 extern CString m_AuthCode;
 extern CString m_CertEncrypt;
 extern CString m_CertSign;
-extern CDRS_CertSafe* s_pDRS_CertSafeCtrl;
+
+extern CString m_RsignCloud;
+extern CString m_TokenLogin;
+extern CString m_TokenEncrypt;
+extern CString m_TokenDecrypt;
+extern CString m_TokenSeal;
+extern CString m_TokenCert;
+
+extern std::vector<seal> m_SealList;
+
+
+
+extern CDRS_CertSafe* s_pDRS_CertSafeCtrl;//ocx接口
 extern HWND s_hMainWnd;
 extern CWnd* s_pMainWnd;
 //extern  CRs_certsafectrl1 *g_SafeCerCtrl;

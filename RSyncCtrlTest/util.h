@@ -11,74 +11,54 @@
 #include "rapidjson/rapidjson.h"
 #include "rapidjson/document.h"
 #include "rapidjson/pointer.h"
+#include "rapidjson/prettywriter.h"
 
-#include "Utility.h"
+#include "filesystem.hpp"
+#include "convert.hpp"
+namespace fs { 
+	using namespace std::experimental::filesystem; 
+	using std::ifstream;
+	using std::ofstream;
+	//using namespace util_filesystem;
+};
 
-#define _RS_CONTAINER_ID (m_ContainerId.GetBuffer())
-#define _RS_PASSWD (m_PassWord.GetBuffer())
-#define _RS_AUTH_CODE (m_AuthCode.GetBuffer())
-#define _RS_CERT_ENCRYPT (m_CertEncrypt.GetBuffer())
-#define _RS_CERT_SIGN (m_CertSign.GetBuffer())
-
+//TODO: 使用wchar_t
 typedef rapidjson::GenericValue<rapidjson::UTF8<char>> GValue;
 typedef rapidjson::GenericDocument<rapidjson::UTF8<char>> GDoc;
-namespace fs { using namespace std::experimental::filesystem; };
 
-inline std::string to_utf8(const std::wstring& _str)
-{
-	std::string ret;
-	Poco::UnicodeConverter::toUTF8(_str, ret);
-	return ret;
-}
-
-inline std::wstring to_wstr(const std::string& _u8)
-{
-	std::wstring ret;
-	Poco::UnicodeConverter::toUTF16(_u8, ret);
-	return ret;
-}
-
-template<typename __Ch>
-void split(const std::basic_string<__Ch>& s, std::vector<std::basic_string<__Ch>>& tokens
-	, const std::basic_string<__Ch>& delimiters)
-{
-	std::string::size_type lastPos = s.find_first_not_of(delimiters, 0);
-	std::string::size_type pos = s.find_first_of(delimiters, lastPos);
-	while (std::string::npos!=pos||std::string::npos!=lastPos)
-	{
-		tokens.emplace_back(s.substr(lastPos, pos - lastPos));
-		lastPos = s.find_first_not_of(delimiters, pos);
-		pos = s.find_first_of(delimiters, lastPos);
-	}
-}
-
-template<typename __Fn>
-inline GDoc parseJson(__Fn _fn)
-{
-	using namespace Reach::ActiveX;
-	using namespace rapidjson;
-
-	CString StrJson = _fn();
-	std::string u8 = to_utf8(StrJson.GetBuffer());
-
-	std::ofstream ofs(fs::current_path().append(L"/recv_log.txt"), std::ios::app);
-	ofs << u8 << std::endl;
-
-	//CPPUNIT_ASSERT(!u8.empty());//是否收到数据
-	GDoc jsonDoc;
-	jsonDoc.Parse(u8.data());
-	return jsonDoc;
-}
 
 std::pair<bool, std::wstring> getParameter(const std::wstring& cmd);
+bool setParameter(const std::wstring& cmd, const std::wstring& val);
 std::pair<bool, std::wstring> getCertBase64(const std::wstring& containerId, short type);
 bool getUserlist(std::vector<std::pair<std::wstring, std::wstring>>& dst);
 bool login();
 bool login(const std::wstring& pw);
-
 bool logout();
-
 std::wstring getTransid();
+std::wstring getLoginToken();
+std::wstring getEncryptToken();
+std::wstring getDecryptToken();
+std::wstring getSealToken();
+std::wstring getCertToken();
+
+struct seal {
+	std::wstring keySn;
+	std::wstring signSn;
+	std::wstring certBase64;
+};
+std::pair<bool, std::vector<seal>> getSealList();
+
+bool encryptAuth();
+bool logoutAuth(const std::wstring& token);
+
+inline std::string jsonDocToStr(const GDoc& doc)
+{
+	assert(!doc.HasParseError());
+	rapidjson::GenericStringBuffer<rapidjson::UTF8<char>> buffer;
+	rapidjson::PrettyWriter<rapidjson::GenericStringBuffer<rapidjson::UTF8<char>>> writer(buffer);
+	doc.Accept(writer);
+	return buffer.GetString();
+}
 
 inline bool hasParseError(const GDoc & _doc)
 {
@@ -91,6 +71,14 @@ inline bool hasCode(const GDoc & _doc)
 	const Value* code = GetValueByPointer(_doc, "/code");
 	if (!(code&&code->IsString())) { return false; }
 	return true;
+}
+
+inline std::string getCode(const GDoc & _doc)
+{
+	using namespace rapidjson;
+	const Value* code = GetValueByPointer(_doc, "/code");
+	if (!(code&&code->IsString())) { return ""; }
+	return code->GetString();
 }
 
 inline bool isSuccessful(const GDoc & _doc)
@@ -120,17 +108,33 @@ std::pair<bool, std::string> getStrMember(const GDoc& _doc, const CharType(&_mem
 	return { true, o->GetString() };
 }
 
-template<typename __Fn, typename CharType, size_t N>
-inline std::pair<bool, std::string> parseJsonAndGetMember(__Fn _fn, const CharType(&_member_name)[N])
+template<typename __Fn>
+inline GDoc parseJson(__Fn _fn)
 {
-	using namespace Reach::ActiveX;
 	using namespace rapidjson;
 
 	CString StrJson = _fn();
 	std::string u8 = to_utf8(StrJson.GetBuffer());
 
-	std::ofstream ofs(fs::current_path().append(L"/recv_log.txt"), std::ios::app);
-	ofs << u8 << std::endl;
+	fs::ofstream ofs(fs::current_path().append(L"/recv_log.txt"), std::ios::app);
+	ofs << u8 << "\n";
+
+	//CPPUNIT_ASSERT(!u8.empty());//是否收到数据
+	GDoc jsonDoc;
+	jsonDoc.Parse(u8.data());
+	return jsonDoc;
+}
+
+template<typename __Fn, typename CharType, size_t N>
+inline std::pair<bool, std::string> parseJsonAndGetMember(__Fn _fn, const CharType(&_member_name)[N])
+{
+	using namespace rapidjson;
+
+	CString StrJson = _fn();
+	std::string u8 = to_utf8(StrJson.GetBuffer());
+
+	fs::ofstream ofs(fs::current_path().append(L"/recv_log.txt"), std::ios::app);
+	ofs << u8 << "\n";
 
 	//CPPUNIT_ASSERT(!u8.empty());//是否收到数据
 	GDoc jsonDoc;

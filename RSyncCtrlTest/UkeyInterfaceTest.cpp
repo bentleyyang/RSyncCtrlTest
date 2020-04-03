@@ -162,7 +162,7 @@ void UkeyInterfaceTest::testKeySignByP7()
 	CPPUNIT_ASSERT(login());
 	//预期成功1 不带原文
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(L"1234", L"1", _RS_CONTAINER_ID); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"1", _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
@@ -174,7 +174,7 @@ void UkeyInterfaceTest::testKeySignByP7()
 
 	//预期成功2 带原文
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(L"1234", L"0", _RS_CONTAINER_ID); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"0", _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
@@ -186,7 +186,7 @@ void UkeyInterfaceTest::testKeySignByP7()
 
 	//预期失败1 container_id 不符
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(L"1234", L"1", L"random-45634562456"); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"1", L"random-45634562456"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
@@ -200,7 +200,7 @@ void UkeyInterfaceTest::testKeySignByP1()
 	CPPUNIT_ASSERT(login());
 	//预期成功1
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(L"1234", _RS_CONTAINER_ID); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(TEST_DATA_W, _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
@@ -212,7 +212,7 @@ void UkeyInterfaceTest::testKeySignByP1()
 
 	//预期失败1 container_id 不符
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(L"1234", L"random-45634562456"); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(TEST_DATA_W, L"random-45634562456"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
@@ -228,7 +228,7 @@ void UkeyInterfaceTest::testVerifySignByP1()
 	//预期成功1
 	{
 		//获取signedMsg
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(L"1234", _RS_CONTAINER_ID); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(TEST_DATA_W, _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
@@ -238,7 +238,7 @@ void UkeyInterfaceTest::testVerifySignByP1()
 		std::string signedMsgContent = signdMsg->GetString();
 
 		{
-			GDoc jsonDoc = parseJson([&signedMsgContent]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP1(_RS_CERT_SIGN, L"1234", to_wstr(signedMsgContent).data()); });
+			GDoc jsonDoc = parseJson([&signedMsgContent]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP1(_RS_CERT_SIGN, TEST_DATA_W, to_wstr(signedMsgContent).data()); });
 			CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 			CPPUNIT_ASSERT(hasCode(jsonDoc));
 			CPPUNIT_ASSERT(isSuccessful(jsonDoc));
@@ -248,7 +248,7 @@ void UkeyInterfaceTest::testVerifySignByP1()
 	//预期失败1 签名证书格式错误
 	{
 		//获取signedMsg
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(L"1234", _RS_CONTAINER_ID); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(TEST_DATA_W, _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
@@ -258,7 +258,7 @@ void UkeyInterfaceTest::testVerifySignByP1()
 		std::string signedMsgContent = signdMsg->GetString();
 
 		{
-			GDoc jsonDoc = parseJson([&signedMsgContent]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP1(L"$%^&%#&SHH", L"1234", to_wstr(signedMsgContent).data()); });
+			GDoc jsonDoc = parseJson([&signedMsgContent]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP1(L"$%^&%#&SHH", TEST_DATA_W, to_wstr(signedMsgContent).data()); });
 			CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 			CPPUNIT_ASSERT(hasCode(jsonDoc));
 			CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
@@ -268,7 +268,7 @@ void UkeyInterfaceTest::testVerifySignByP1()
 	//预期失败2 代签名原文不符
 	{
 		//获取signedMsg
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(L"1234", _RS_CONTAINER_ID); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP1(TEST_DATA_W, _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
@@ -287,7 +287,7 @@ void UkeyInterfaceTest::testVerifySignByP1()
 
 	//预期失败2 签名值不符
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP1(_RS_CERT_SIGN, L"1234", L"#^@&^$d"); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP1(_RS_CERT_SIGN, TEST_DATA_W, L"#^@&^$d"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
@@ -449,7 +449,7 @@ void UkeyInterfaceTest::testKeyEncryptData()
 	using namespace rapidjson;
 	//预期成功1
 	{
-		auto encRsKey = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(L"1234", _RS_CERT_ENCRYPT); }, "/data/encRsKey");
+		auto encRsKey = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(TEST_DATA_W, _RS_CERT_ENCRYPT); }, "/data/encRsKey");
 		CPPUNIT_ASSERT(encRsKey.first);
 		std::string& encRsKeyContent = encRsKey.second;
 		CPPUNIT_ASSERT(!encRsKeyContent.empty());
@@ -457,7 +457,7 @@ void UkeyInterfaceTest::testKeyEncryptData()
 
 	//预期失败1 证书不符
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(L"1234", L"#$@sdf"); });
+		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(TEST_DATA_W, L"#$@sdf"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
@@ -469,7 +469,7 @@ void UkeyInterfaceTest::testKeyDecryptData()
 	using namespace rapidjson;
 	//预期成功1
 	{
-		auto encRsKey = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(L"1234", _RS_CERT_ENCRYPT); }, "/data/encRsKey");
+		auto encRsKey = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(TEST_DATA_W, _RS_CERT_ENCRYPT); }, "/data/encRsKey");
 		CPPUNIT_ASSERT(encRsKey.first);
 		std::string& encRsKeyContent = encRsKey.second;
 		CPPUNIT_ASSERT(!encRsKeyContent.empty());
@@ -492,7 +492,7 @@ void UkeyInterfaceTest::testKeyDecryptData()
 
 	//预期失败1 containerId不符
 	{
-		auto encRsKey = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(L"1234", _RS_CERT_ENCRYPT); }, "/data/encRsKey");
+		auto encRsKey = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptData(TEST_DATA_W, _RS_CERT_ENCRYPT); }, "/data/encRsKey");
 		CPPUNIT_ASSERT(encRsKey.first);
 		std::string& encRsKeyContent = encRsKey.second;
 		CPPUNIT_ASSERT(!encRsKeyContent.empty());
@@ -514,7 +514,7 @@ void UkeyInterfaceTest::testKeyEncryptFile()
 	{
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		std::ofstream ofs(fs::path(inFile), std::ios::binary);
+		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
 		CPPUNIT_ASSERT(ofs);
 		ofs.write("1234", 4);
 		CPPUNIT_ASSERT(ofs);
@@ -550,7 +550,7 @@ void UkeyInterfaceTest::testKeyDecryptFile()
 	{
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		std::ofstream ofs(fs::path(inFile), std::ios::binary);
+		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
 		CPPUNIT_ASSERT(ofs);
 		ofs.write("1234", 4);
 		CPPUNIT_ASSERT(ofs);
@@ -572,7 +572,7 @@ void UkeyInterfaceTest::testKeyDecryptFile()
 			CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 			CPPUNIT_ASSERT(fs::exists(decryptOutFile));
 
-			std::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
+			fs::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
 			char tt[4];
 			ifs.read(tt, 4);
 			CPPUNIT_ASSERT(ifs);

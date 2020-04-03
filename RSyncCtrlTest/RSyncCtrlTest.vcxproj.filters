@@ -36,9 +36,6 @@
     <ClInclude Include="InterfaceTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Utility.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="CommonInterfaceTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -51,13 +48,55 @@
     <ClInclude Include="util.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CommonInterfaceNoLoginTest.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="UkeyInterfaceNoLoginTest.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="CDlgPasswd.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CDlgTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="filesystem.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="convert.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonTestAuto.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonTestManual.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonTestAutoLogout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonTestManualLogout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UkeyTestAuto.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UkeyTestManual.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UkeyTestAutoLogout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UkeyTestManualLogout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MobileTestAuto.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MobileTestManual.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MobileTestAutoLogout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MobileTestManualLogout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SpecificTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -72,9 +111,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CDRS_CertSafe.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Utility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="InterfaceTest.cpp">
@@ -92,13 +128,49 @@
     <ClCompile Include="util.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CommonInterfaceNoLoginTest.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="UkeyInterfaceNoLoginTest.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="CDlgPasswd.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CDlgTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonTestAuto.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonTestManual.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonTestAutoLogout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonTestManualLogout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UkeyTestAuto.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UkeyTestManual.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UkeyTestAutoLogout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UkeyTestManualLogout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MobileTestAuto.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MobileTestManual.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MobileTestAutoLogout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MobileTestManualLogout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SpecificTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -17,14 +17,13 @@
 #include "cppunit/TextOutputter.h"
 
 #include "CDlgPasswd.h"
+#include "CDlgTest.h"
+#include "util.h"
 
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-#define CPPUNIT_CMD 0
-namespace fs { using namespace std::experimental::filesystem; };
 
 
 // CRSyncCtrlTestApp
@@ -118,6 +117,12 @@ BOOL CRSyncCtrlTestApp::InitInstance()
 	// 由于对话框已关闭，所以将返回 FALSE 以便退出应用程序，
 	//  而不是启动应用程序的消息泵。
 
+#if TEST
+	CDlgTest dlgTest;
+	dlgTest.DoModal();
+	return FALSE;
+#endif
+
 	MyCreateWindow(MyWndProc, &s_hMainWnd);
 
 	CDlgPasswd dlg;
@@ -127,7 +132,7 @@ BOOL CRSyncCtrlTestApp::InitInstance()
 		CppUnit::TestResultCollector rc;
 		r.addListener(&rc);
 
-#if CPPUNIT_CMD
+#if CPPUNIT_CSL
 		CppUnit::TestRunner runner;
 #else
 		//CPPUNIT_NS::MfcUi::TestRunner runner;
@@ -136,18 +141,30 @@ BOOL CRSyncCtrlTestApp::InitInstance()
 
 		//runner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
 		//runner.addTest(InterfaceTestWithLogin::suite());
-		CppUnit::TestFactoryRegistry &registry = CppUnit::TestFactoryRegistry::getRegistry("登录测试");
-		CppUnit::TestFactoryRegistry &registry2 = CppUnit::TestFactoryRegistry::getRegistry("无登录测试(拔掉key)");
-		runner.addTest(registry.makeTest());
-		runner.addTest(registry2.makeTest());
+		CppUnit::TestFactoryRegistry &registryAll = CppUnit::TestFactoryRegistry::getRegistry();
+		registryAll.addRegistry(REGISTRY_NAME_AUTO);
+		registryAll.addRegistry(REGISTRY_NAME_MANUAL);
+		registryAll.addRegistry("其它");
+		{
+			CppUnit::TestFactoryRegistry &registryAutomatic = registryAll.getRegistry(REGISTRY_NAME_AUTO);
+			CppUnit::TestFactoryRegistry &registryManual = registryAll.getRegistry(REGISTRY_NAME_MANUAL);
 
-#if CPPUNIT_CMD
+			registryAutomatic.addRegistry(REGISTRY_NAME_AUTO_LOGIN);
+			registryAutomatic.addRegistry(REGISTRY_NAME_AUTO_LOGOUT);
+
+			registryManual.addRegistry(REGISTRY_NAME_MANUAL_LOGIN);
+			registryManual.addRegistry(REGISTRY_NAME_MANUAL_LOGOUT);
+		}
+		
+		runner.addTest(registryAll.makeTest());
+
+#if CPPUNIT_CSL
 		runner.run(r);
 #else
 		runner.run();
 #endif
 
-#if CPPUNIT_CMD
+#if CPPUNIT_CSL
 		std::ofstream ofs(fs::current_path().append(L"/test_log.txt"));
 		if (!ofs.is_open())
 		{

@@ -1,35 +1,31 @@
-﻿#include "stdafx.h"
-#include "CommonInterfaceTest.h"
-#include "util.h"
+#include "stdafx.h"
+#include "CommonTestAuto.h"
 
-//CPPUNIT_TEST_SUITE_REGISTRATION(CommonInterfaceTest);
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(CommonInterfaceTest, "登录测试");
-
-
-CommonInterfaceTest::CommonInterfaceTest()
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(CommonTestAuto, REGISTRY_NAME_AUTO_LOGIN);
+CommonTestAuto::CommonTestAuto()
 {
 }
 
 
-CommonInterfaceTest::~CommonInterfaceTest()
+CommonTestAuto::~CommonTestAuto()
 {
 }
 
-void CommonInterfaceTest::setUp()
-{
-
-}
-
-void CommonInterfaceTest::tearDown()
+void CommonTestAuto::setUp()
 {
 
 }
 
-void CommonInterfaceTest::testGetCertInfo()
+void CommonTestAuto::tearDown()
+{
+
+}
+
+void CommonTestAuto::testGetCertInfo()
 {
 	using namespace rapidjson;
 
-	//预期失败1 type不符
+	//Ԥ��ʧ��1 type����
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"-1"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -37,7 +33,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
 	}
 
-	//预期失败2 证书不符
+	//Ԥ��ʧ��2 ֤�鲻��
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(L"#$^%$&@fg", L"1"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -45,7 +41,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
 	}
 
-	//预期成功1 证书版本
+	//Ԥ�ڳɹ�1 ֤��汾
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"1"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -56,7 +52,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功2 证书序列号
+	//Ԥ�ڳɹ�2 ֤�����к�
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"2"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -67,7 +63,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功3 证书颁发者信息
+	//Ԥ�ڳɹ�3 ֤��䷢����Ϣ
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"5"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -78,7 +74,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功4 证书拥有者信息
+	//Ԥ�ڳɹ�4 ֤��ӵ������Ϣ
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"7"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -89,7 +85,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功5 证书有效期
+	//Ԥ�ڳɹ�5 ֤����Ч��
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"6"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -100,7 +96,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功6 证书颁发者CN
+	//Ԥ�ڳɹ�6 ֤��䷢��CN
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"33"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -111,7 +107,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功7 证书颁发者O
+	//Ԥ�ڳɹ�7 ֤��䷢��O
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"34"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -122,7 +118,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功8 证书颁发者OU
+	//Ԥ�ڳɹ�8 ֤��䷢��OU
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"35"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -133,7 +129,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功9 证书拥有者信息CN
+	//Ԥ�ڳɹ�9 ֤��ӵ������ϢCN
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"49"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -144,7 +140,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功10 证书拥有者信息O
+	//Ԥ�ڳɹ�10 ֤��ӵ������ϢO
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"50"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -155,7 +151,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功11 证书拥有者信息OU
+	//Ԥ�ڳɹ�11 ֤��ӵ������ϢOU
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"51"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -166,7 +162,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功12 证书拥有者信息EMAIL
+	//Ԥ�ڳɹ�12 ֤��ӵ������ϢEMAIL
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"52"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -177,7 +173,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功13 个人证书身份证号
+	//Ԥ�ڳɹ�13 ����֤������֤��
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"53"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -188,7 +184,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功14 企业统一社会信用代码
+	//Ԥ�ڳɹ�14 ��ҵͳһ������ô���
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"54"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -199,7 +195,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功15 证书使用者密钥标识符
+	//Ԥ�ڳɹ�15 ֤��ʹ������Կ��ʶ��
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"55"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -210,7 +206,7 @@ void CommonInterfaceTest::testGetCertInfo()
 		CPPUNIT_ASSERT(info&&info->IsString());
 	}
 
-	//预期成功16 证书唯一码
+	//Ԥ�ڳɹ�16 ֤��Ψһ��
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"300"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -224,14 +220,14 @@ void CommonInterfaceTest::testGetCertInfo()
 }
 
 
-void CommonInterfaceTest::testConfigParameters()
+void CommonTestAuto::testConfigParameters()
 {
 	return;
 	using namespace rapidjson;
 
-	//TODO: cmd对应的值应该填写完整
+	//TODO: cmd��Ӧ��ֵӦ����д����
 
-	//预期成功1
+	//Ԥ�ڳɹ�1
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"authCode", L""); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -239,7 +235,7 @@ void CommonInterfaceTest::testConfigParameters()
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 	}
 
-	//预期成功2
+	//Ԥ�ڳɹ�2
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"rsigncloud", L""); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -247,7 +243,7 @@ void CommonInterfaceTest::testConfigParameters()
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 	}
 
-	//预期成功3
+	//Ԥ�ڳɹ�3
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"authType", L""); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -255,7 +251,7 @@ void CommonInterfaceTest::testConfigParameters()
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 	}
 
-	//预期成功4
+	//Ԥ�ڳɹ�4
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"keySn", L""); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -263,7 +259,7 @@ void CommonInterfaceTest::testConfigParameters()
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 	}
 
-	//预期成功5
+	//Ԥ�ڳɹ�5
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"signAndVerify", L""); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -271,7 +267,7 @@ void CommonInterfaceTest::testConfigParameters()
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 	}
 
-	//预期失败 cmd不符
+	//Ԥ��ʧ�� cmd����
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"#&&#s", L""); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -279,7 +275,7 @@ void CommonInterfaceTest::testConfigParameters()
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
 	}
 
-	//预期失败 cmd对应的值不符
+	//Ԥ��ʧ�� cmd��Ӧ��ֵ����
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"authCode", L"$%*cv"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -288,14 +284,14 @@ void CommonInterfaceTest::testConfigParameters()
 	}
 }
 
-void CommonInterfaceTest::testConfigParamsByBussSys()
+void CommonTestAuto::testConfigParamsByBussSys()
 {
 	return;
 	using namespace rapidjson;
 
-	//TODO: 项目名称填写完整
+	//TODO: ��Ŀ������д����
 
-	//预期成功
+	//Ԥ�ڳɹ�
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParamsByBussSys(L"bussName", L""); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -303,7 +299,7 @@ void CommonInterfaceTest::testConfigParamsByBussSys()
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 	}
 
-	//预期失败 cmd不符
+	//Ԥ��ʧ�� cmd����
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParamsByBussSys(L"@#^fdg", L""); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -311,7 +307,7 @@ void CommonInterfaceTest::testConfigParamsByBussSys()
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
 	}
 
-	//预期失败 项目名称不符
+	//Ԥ��ʧ�� ��Ŀ���Ʋ���
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParamsByBussSys(L"bussName", L"fghsdfg"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -320,23 +316,23 @@ void CommonInterfaceTest::testConfigParamsByBussSys()
 	}
 }
 
-void CommonInterfaceTest::testGetParameters()
+void CommonTestAuto::testGetParameters()
 {
 	using namespace rapidjson;
 
 	const wchar_t* cmds[] = { L"authCode", L"rsigncloud", L"authType", L"keySn", L"signAndVerify" };
-	//预期成功
+	//Ԥ�ڳɹ�
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L"authCode"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
 		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 
-		const Value* authCode = GetValueByPointer(jsonDoc, "/data/authCode");//TODO: 与文档说明的不一致
+		const Value* authCode = GetValueByPointer(jsonDoc, "/data/authCode");//TODO: ���ĵ�˵���Ĳ�һ��
 		CPPUNIT_ASSERT(authCode&&authCode->IsString());
 	}
 
-	//预期成功
+	//Ԥ�ڳɹ�
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L"rsigncloud"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -347,7 +343,7 @@ void CommonInterfaceTest::testGetParameters()
 		CPPUNIT_ASSERT(rsigncloud&&rsigncloud->IsString());
 	}
 
-	//预期成功
+	//Ԥ�ڳɹ�
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L"authType"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -358,7 +354,7 @@ void CommonInterfaceTest::testGetParameters()
 		CPPUNIT_ASSERT(authType&&authType->IsString());
 	}
 
-	//预期成功
+	//Ԥ�ڳɹ�
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L"keySn"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -369,7 +365,7 @@ void CommonInterfaceTest::testGetParameters()
 		CPPUNIT_ASSERT(keySn&&keySn->IsString());
 	}
 
-	//预期成功
+	//Ԥ�ڳɹ�
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L"signAndVerify"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -380,7 +376,7 @@ void CommonInterfaceTest::testGetParameters()
 		CPPUNIT_ASSERT(signAndVerify&&signAndVerify->IsString());
 	}
 
-	//预期失败1
+	//Ԥ��ʧ��1
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L""); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -391,15 +387,15 @@ void CommonInterfaceTest::testGetParameters()
 
 
 
-void CommonInterfaceTest::testVerifySignByP7()
+void CommonTestAuto::testVerifySignByP7()
 {
 	using namespace rapidjson;
 
 	CPPUNIT_ASSERT(login());
 
-	//预期成功1 不带原文
+	//Ԥ�ڳɹ�1 ����ԭ��
 	{
-		//获取signedMsg
+		//��ȡsignedMsg
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"1", _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
@@ -416,9 +412,9 @@ void CommonInterfaceTest::testVerifySignByP7()
 			CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 		}
 	}
-	//预期成功2 带原文
+	//Ԥ�ڳɹ�2 ��ԭ��
 	{
-		//获取signedMsg
+		//��ȡsignedMsg
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"0", _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
@@ -436,7 +432,7 @@ void CommonInterfaceTest::testVerifySignByP7()
 		}
 	}
 
-	//预期失败1 签名值格式错误
+	//Ԥ��ʧ��1 ǩ��ֵ��ʽ����
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP7(TEST_DATA_W, L"43673456547", L"1"); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
@@ -444,9 +440,9 @@ void CommonInterfaceTest::testVerifySignByP7()
 		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
 	}
 
-	//预期失败2 flag不符合实际
+	//Ԥ��ʧ��2 flag������ʵ��
 	{
-		//获取signedMsg
+		//��ȡsignedMsg
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"1", _RS_CONTAINER_ID); });
 		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
 		CPPUNIT_ASSERT(hasCode(jsonDoc));
@@ -465,19 +461,19 @@ void CommonInterfaceTest::testVerifySignByP7()
 	}
 }
 
-void CommonInterfaceTest::testEncryptFile()
+void CommonTestAuto::testEncryptFile()
 {
 	using namespace rapidjson;
 
 
 
-	//预期成功1
+	//Ԥ�ڳɹ�1
 	{
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
 		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
 		CPPUNIT_ASSERT(ofs);
-		ofs.write("1234", 4);
+		ofs.write(TEST_DATA, sizeof(TEST_DATA)-1);
 		CPPUNIT_ASSERT(ofs);
 		ofs.close();
 		CPPUNIT_ASSERT(fs::exists(inFile));
@@ -491,9 +487,9 @@ void CommonInterfaceTest::testEncryptFile()
 		CPPUNIT_ASSERT(fs::exists(outFile));
 	}
 
-	//预期失败1 原文件不存在
+	//Ԥ��ʧ��1 ԭ�ļ�������
 	{
-		//TODO: 这里是直接收到空数据，没有code
+		//TODO: ������ֱ���յ������ݣ�û��code
 		std::wstring inFile = L"C:/agag2342sdfgsfg";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
 		CPPUNIT_ASSERT(!fs::exists(inFile));
@@ -504,17 +500,17 @@ void CommonInterfaceTest::testEncryptFile()
 	}
 }
 
-void CommonInterfaceTest::testDevryptFile()
+void CommonTestAuto::testDevryptFile()
 {
 	using namespace rapidjson;
 
-	//预期成功1
+	//Ԥ�ڳɹ�1
 	{
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
 		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
 		CPPUNIT_ASSERT(ofs);
-		ofs.write("1234", 4);
+		ofs.write(TEST_DATA, sizeof(TEST_DATA) - 1);
 		CPPUNIT_ASSERT(ofs);
 		ofs.close();
 		CPPUNIT_ASSERT(fs::exists(inFile));
@@ -541,23 +537,23 @@ void CommonInterfaceTest::testDevryptFile()
 
 
 			fs::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
-			char tt[4];
-			ifs.read(tt, 4);
+			char tt[sizeof(TEST_DATA) - 1];
+			ifs.read(tt, sizeof(TEST_DATA) - 1);
 			CPPUNIT_ASSERT(ifs);
-			CPPUNIT_ASSERT(std::equal(tt, tt + 4, "1234"));
+			CPPUNIT_ASSERT(std::equal(tt, tt + (sizeof(TEST_DATA) - 1), TEST_DATA));
 
-			//TODO: 这里测试的结果，源文件只有4个字节长度，解密后的文件，虽然前4个字节是正确的，但是整个文件会强制变成128字节，并且后面的是乱码
-			CPPUNIT_ASSERT(fs::file_size(fs::path(decryptOutFile)) == 4);
+			//TODO: ������ԵĽ����Դ�ļ�ֻ��4���ֽڳ��ȣ����ܺ���ļ�����Ȼǰ4���ֽ�����ȷ�ģ����������ļ���ǿ�Ʊ��128�ֽڣ����Һ����������
+			CPPUNIT_ASSERT(fs::file_size(fs::path(decryptOutFile)) == (sizeof(TEST_DATA) - 1));
 		}
 	}
 
-	//预期失败1 symKey与密文不匹配
+	//Ԥ��ʧ��1 symKey�����Ĳ�ƥ��
 	{
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
 		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
 		CPPUNIT_ASSERT(ofs);
-		ofs.write("1234", 4);
+		ofs.write(TEST_DATA, sizeof(TEST_DATA) - 1);
 		CPPUNIT_ASSERT(ofs);
 		ofs.close();
 		CPPUNIT_ASSERT(fs::exists(inFile));
@@ -581,10 +577,10 @@ void CommonInterfaceTest::testDevryptFile()
 	}
 }
 
-void CommonInterfaceTest::testEncryptData()
+void CommonTestAuto::testEncryptData()
 {
 	using namespace rapidjson;
-	//预期成功1
+	//Ԥ�ڳɹ�1
 	{
 
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptData(TEST_DATA_W); });
@@ -601,7 +597,7 @@ void CommonInterfaceTest::testEncryptData()
 		std::string encDataStrContent = encDataStr->GetString();
 	}
 
-	////预期失败1 待加密数据长度大于1024
+	////Ԥ��ʧ��1 ���������ݳ��ȴ���1024
 	//{
 	//	std::vector<wchar_t> tt(1024, L'A' ); tt[1023] = L'\0';
 	//
@@ -614,10 +610,10 @@ void CommonInterfaceTest::testEncryptData()
 	//}
 }
 
-void CommonInterfaceTest::testDevryptData()
+void CommonTestAuto::testDevryptData()
 {
 	using namespace rapidjson;
-	//预期成功1
+	//Ԥ�ڳɹ�1
 	{
 
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptData(TEST_DATA_W); });
@@ -641,11 +637,11 @@ void CommonInterfaceTest::testDevryptData()
 
 			const Value* dncDataStr = GetValueByPointer(jsonDoc, "/data/dncDataStr");
 			std::string dncDataContent = dncDataStr->GetString();
-			CPPUNIT_ASSERT(dncDataContent == "1234");
+			CPPUNIT_ASSERT(dncDataContent == TEST_DATA);
 		}
 	}
 
-	//预期失败1 密钥不符
+	//Ԥ��ʧ��1 ��Կ����
 	{
 
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptData(TEST_DATA_W); });
@@ -670,7 +666,7 @@ void CommonInterfaceTest::testDevryptData()
 		}
 	}
 
-	//预期失败1 密文不符
+	//Ԥ��ʧ��1 ���Ĳ���
 	{
 
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptData(TEST_DATA_W); });

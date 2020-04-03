@@ -677,7 +677,7 @@ void InterfaceTest::testEncryptFile()
 	{
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		std::ofstream ofs(fs::path(inFile), std::ios::binary);
+		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
 		CPPUNIT_ASSERT(ofs);
 		ofs.write("1234", 4);
 		CPPUNIT_ASSERT(ofs);
@@ -718,7 +718,7 @@ void InterfaceTest::testDevryptFile()
 	{
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		std::ofstream ofs(fs::path(inFile), std::ios::binary);
+		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
 		CPPUNIT_ASSERT(ofs);
 		ofs.write("1234", 4);
 		CPPUNIT_ASSERT(ofs);
@@ -750,7 +750,7 @@ void InterfaceTest::testDevryptFile()
 
 
 			
-			std::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
+			fs::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
 			char tt[4];
 			ifs.read(tt, 4);
 			CPPUNIT_ASSERT(ifs);
@@ -765,7 +765,7 @@ void InterfaceTest::testDevryptFile()
 	{
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		std::ofstream ofs(fs::path(inFile), std::ios::binary);
+		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
 		CPPUNIT_ASSERT(ofs);
 		ofs.write("1234", 4);
 		CPPUNIT_ASSERT(ofs);

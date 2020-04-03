@@ -29,4 +29,5 @@ private:
 
 public:
 	CString getPw();
+	virtual BOOL OnInitDialog();
 };

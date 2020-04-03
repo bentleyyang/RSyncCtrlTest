@@ -15,6 +15,15 @@ std::pair<bool, std::wstring> getParameter(const std::wstring & cmd)
 	return { true, to_wstr(jsonDoc["data"][to_utf8(cmd).data()].GetString()) };
 }
 
+bool setParameter(const std::wstring & cmd, const std::wstring & val)
+{
+	GDoc jsonDoc = parseJson([&cmd, &val]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(cmd.data(), val.data()); });
+	//if (hasParseError(jsonDoc)) { return false; }
+	//if (!isSuccessful(jsonDoc)) { return false; }
+
+	return true;
+}
+
 std::pair<bool, std::wstring> getCertBase64(const std::wstring & containerId, short type)
 {
 	auto cert = parseJsonAndGetMember([&containerId, type]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertBase64String(containerId.data(), type); }, "/data/certBase64");
@@ -29,7 +38,12 @@ bool getUserlist(std::vector<std::pair<std::wstring, std::wstring>>& dst)
 
 	//预期成功1 不带原文
 	{
-		auto userlist=parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetUserList(); }, "/data/userlist");
+		std::pair<bool, std::string> userlist;
+		try {
+			userlist = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetUserList(); }, "/data/userlist");
+		}
+		catch (std::exception& e) { return false; }
+		
 		if (!userlist.first) { return false; }
 
 		std::vector<std::wstring> tmp;
@@ -114,5 +128,151 @@ std::wstring getTransid()
 	if (!(std::all_of(transidContent.begin(), transidContent.end(), ::isdigit))) { return ret; }
 	ret = to_wstr(transidContent);
 	return ret;
+}
+
+std::wstring getLoginToken()
+{
+	using namespace rapidjson;
+	std::wstring ret(L"");
+
+#if 1
+	ret = m_TokenLogin;
+#else
+#endif
+
+	return ret;
+}
+
+std::wstring getEncryptToken()
+{
+	using namespace rapidjson;
+	std::wstring ret(L"");
+
+#if 1
+	ret = m_TokenEncrypt;
+#else
+#endif
+	
+	return ret;
+}
+
+std::wstring getDecryptToken()
+{
+	using namespace rapidjson;
+	std::wstring ret(L"");
+
+#if 1
+	ret = m_TokenDecrypt;
+#else
+#endif
+
+	return ret;
+}
+
+std::wstring getSealToken()
+{
+	using namespace rapidjson;
+	std::wstring ret(L"");
+
+#if 1
+	ret = m_TokenSeal;
+#else
+#endif
+
+	return ret;
+}
+
+std::wstring getCertToken()
+{
+	using namespace rapidjson;
+	std::wstring ret(L"");
+
+#if 1
+	ret = m_TokenCert;
+#else
+#endif
+
+	return ret;
+}
+
+std::pair<bool, std::vector<seal>> getSealList()
+{
+	using namespace rapidjson;
+	std::vector<seal> ret(0);
+	std::wstring token = getSealToken();
+	GDoc jsonDoc;
+	try
+	{
+		jsonDoc = parseJson([&token]()->CString { return s_pDRS_CertSafeCtrl->RS_CloudGetSealList(token.data()); });
+	}
+	catch (const std::exception&)
+	{
+		return { false, ret };
+	}
+	
+	if (hasParseError(jsonDoc)|| !isSuccessful(jsonDoc))
+	{
+		return { false, ret };
+	}
+
+	const Value* data = GetValueByPointer(jsonDoc, "/data");
+	if (!data || !data->IsArray()) { return { false, ret }; }
+	auto dataContent = data->GetArray();
+	for (const auto& elm : dataContent)
+	{
+		if (!elm.HasMember("keySn")
+			|| !elm.HasMember("signSn")
+			|| !elm.HasMember("certBase64")) {
+			return { false, std::vector<seal>(0) };
+		}
+		
+		ret.emplace_back(seal{ to_wstr(elm["keySn"].GetString()),to_wstr(elm["signSn"].GetString()),to_wstr(elm["certBase64"].GetString()) });
+	}
+	return { true, ret };
+}
+
+bool encryptAuth()
+{
+	//TODO: 生成二维码，并弹出对话框扫二维码，然后轮询结果？
+	//TODO: 能否提供模拟手机扫码动作的接口？
+	using namespace rapidjson;
+	std::wstring transId = getTransid();
+	if (transId.empty()) { return false; }
+
+	
+	GDoc jsonDoc = parseJson([&transId]()->CString { return s_pDRS_CertSafeCtrl->RS_CloudEncryptAuth(transId.data()); });
+	if (hasParseError(jsonDoc))
+	{
+		return false;
+	}
+	if (!isSuccessful(jsonDoc))
+	{
+		return false;
+	}
+
+	auto action = getStrMember(jsonDoc, "/data/action");
+	if (!action.first) { return false; }
+	std::string& actionContent = action.second;
+
+	auto authIdent = getStrMember(jsonDoc, "/data/authIdent");
+	if (!authIdent.first) { return false; }
+	std::string& authIdentContent = authIdent.second;
+	return true;
+}
+
+bool logoutAuth(const std::wstring & token)
+{
+	using namespace rapidjson;
+
+	GDoc jsonDoc = parseJson([&token]()->CString { return s_pDRS_CertSafeCtrl->RS_CloudLogoutAuth(token.data()); });
+	if (hasParseError(jsonDoc))
+	{
+		return false;
+	}
+	if (!isSuccessful(jsonDoc))
+	{
+		return false;
+	}
+	return true;
 }
 
