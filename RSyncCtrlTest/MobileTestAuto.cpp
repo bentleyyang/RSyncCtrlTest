@@ -620,11 +620,49 @@ void MobileTestAuto::testCloudReceiveDevryptResult()
 	//预期成功
 	{
 		//加密
+		{
+			//预期成功
+			{
+				transId = getTransid();
+				CPPUNIT_ASSERT(!transId.empty());
+				token = getEncryptToken();
+				CPPUNIT_ASSERT(!token.empty());
+				GDoc jsonDoc = parseJson([&transId, &token]()->CString { return s_pDRS_CertSafeCtrl->RS_CloudEncryptData(TEST_DATA_W, transId.data(), token.data()); });
+				CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+				CPPUNIT_ASSERT(hasCode(jsonDoc));
+				CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+
+				auto encReachKey = getStrMember(jsonDoc, "/data/encReachKey");
+				CPPUNIT_ASSERT(encReachKey.first);
+				std::string& encReachKeyContent = encReachKey.second;
+
+				{
+					//解密
+					transId = getTransid();
+					CPPUNIT_ASSERT(!transId.empty());
+					token = getDecryptToken();
+					CPPUNIT_ASSERT(!token.empty());
+					GDoc jsonDoc = parseJson([&encReachKeyContent, &transId, &token]()->CString { return s_pDRS_CertSafeCtrl->RS_CloudDevryptData(to_wstr(encReachKeyContent).data(), L"", transId.data(), token.data()); });
+					CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+					CPPUNIT_ASSERT(hasCode(jsonDoc));
+					CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+
+					auto symKey = getStrMember(jsonDoc, "/data/symKey");
+					CPPUNIT_ASSERT(symKey.first);
+					std::string& symKeyContent = symKey.second;
+					CPPUNIT_ASSERT(symKeyContent == TEST_DATA);
+				}
+			}
+		}
 		transId = getTransid();
 		CPPUNIT_ASSERT(!transId.empty());
 		token = getEncryptToken();
 		CPPUNIT_ASSERT(!token.empty());
-
+		//wchar_t uu[80] = {0};
+		GDoc jsonDoc = parseJson([&transId, &token]()->CString { return s_pDRS_CertSafeCtrl->RS_CloudReceiveDevryptResult(transId.data(), token.data(), L"1"); });
+		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
+		CPPUNIT_ASSERT(hasCode(jsonDoc));
+		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
 	}
 }
 

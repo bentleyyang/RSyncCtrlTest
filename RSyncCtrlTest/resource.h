@@ -5,7 +5,7 @@
 #define Major                           0
 #define MAIN                            1
 #define FileIndex                       1
-#define Minor                           3
+#define Minor                           4
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
 #define IDS_ABOUTBOX                    101

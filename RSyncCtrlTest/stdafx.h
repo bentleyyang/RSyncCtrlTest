@@ -60,6 +60,24 @@
 #include <afxcontrolbars.h>
 #include <afxcontrolbars.h>
 
+
+inline void onAssertPass(std::string filename, int line, std::string cond)
+{
+	std::string u8=u8"通过：";
+	u8.append(filename).append(u8"第").append(std::to_string(line)).append(u8"行\n条件：").append(cond).append("\n\n");
+
+	fs::ofstream ofs(fs::current_path().append(L"/通过的测试.txt"), std::ios::binary);
+	if (ofs)
+	{
+		ofs.write(u8.data(), u8.length());
+	}
+}
+#define ASSERT2(cond) \
+(CPPUNIT_ASSERT_MESSAGE("", cond); \
+CPPUNIT_NS::SourceLine location=CPPUNIT_SOURCELINE(); \
+onAssertPass(location.fileName(), location.lineNumber(), #cond);)
+
+
 #define REGISTRY_NAME_AUTO "自动化测试部分"
 #define REGISTRY_NAME_MANUAL "手动测试部分"
 #define REGISTRY_NAME_LOGIN "登录测试"
@@ -71,7 +89,7 @@
 #define REGISTRY_NAME_MANUAL_LOGOUT "无登录测试(插拔key一次)(手动测试)"
 
 #define TEST 0
-#define TEST_WITH_INFO_POPUP 1
+#define TEST_WITH_INFO_POPUP 1//测试特殊用例时弹出提示信息框（如提示用户拔掉key）
 #define CPPUNIT_CSL 0//CPPUNIT无界面版，并且有测试log
 #define UNNECISSARY_ASSERT 0//暂时不用考虑的断言
 

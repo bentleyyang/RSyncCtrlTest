@@ -54,12 +54,6 @@
     <ClInclude Include="CDlgTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="filesystem.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="convert.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="CommonTestAuto.h">
       <Filter>头文件</Filter>
     </ClInclude>

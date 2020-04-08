@@ -90,7 +90,7 @@ void CDlgPasswd::OnBnClickedOk()
 	{
 		//获取证书列表
 		auto seallist = getSealList();
-		if (!seallist.first) { AfxMessageBox(L"获取签章列表失败"); return; }
+		if (!seallist.first) { AfxMessageBox(L"获取签章列表失败，请检查签章Token是否过期"); return; }
 		else if (seallist.second.empty()) { AfxMessageBox(L"签章列表为空"); return; }
 		else { m_SealList = seallist.second; }
 	}
@@ -111,6 +111,21 @@ void CDlgPasswd::OnBnClickedOk()
 			gtmp.SetString(to_utf8(m_PassWord.GetBuffer()).data(), jsonDoc.GetAllocator());
 			SetValueByPointer(jsonDoc, u8"/密码", gtmp);
 			//SetValueByPointer(jsonDoc, "/password", StringRef(to_utf8(m_PassWord.GetBuffer()).data()));
+			
+			gtmp.SetString(to_utf8(m_AuthCode.GetBuffer()).data(), jsonDoc.GetAllocator());
+			SetValueByPointer(jsonDoc, u8"/授权码", gtmp);
+			gtmp.SetString(to_utf8(m_RsignCloud.GetBuffer()).data(), jsonDoc.GetAllocator());
+			SetValueByPointer(jsonDoc, u8"/服务器地址", gtmp);
+			gtmp.SetString(to_utf8(m_TokenLogin.GetBuffer()).data(), jsonDoc.GetAllocator());
+			SetValueByPointer(jsonDoc, u8"/token/登录token", gtmp);
+			gtmp.SetString(to_utf8(m_TokenEncrypt.GetBuffer()).data(), jsonDoc.GetAllocator());
+			SetValueByPointer(jsonDoc, u8"/token/加密token", gtmp);
+			gtmp.SetString(to_utf8(m_TokenDecrypt.GetBuffer()).data(), jsonDoc.GetAllocator());
+			SetValueByPointer(jsonDoc, u8"/token/解密token", gtmp);
+			gtmp.SetString(to_utf8(m_TokenSeal.GetBuffer()).data(), jsonDoc.GetAllocator());
+			SetValueByPointer(jsonDoc, u8"/token/签章token", gtmp);
+			gtmp.SetString(to_utf8(m_TokenCert.GetBuffer()).data(), jsonDoc.GetAllocator());
+			SetValueByPointer(jsonDoc, u8"/token/证书token", gtmp);
 		}
 
 
@@ -186,8 +201,7 @@ BOOL CDlgPasswd::OnInitDialog()
 		fs::ifstream ifs(path_conf, std::ios::binary);
 		ifs.read(u8.data(), len);
 		if (ifs.fail()) { AfxMessageBox(L"config.json读取错误"); return exitFn(); }
-
-		jsonDoc.Parse(u8.data());
+		jsonDoc.Parse(uint8_t(u8[0]) == 0xef ? u8.data() + 3 : u8.data());
 		if (jsonDoc.HasParseError()) { AfxMessageBox(L"config.json解析错误"); return exitFn(); }
 		const Value* token_login = GetValueByPointer(jsonDoc, u8"/token/登录token");
 		const Value* token_encrypt = GetValueByPointer(jsonDoc, u8"/token/加密token");

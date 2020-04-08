@@ -15,6 +15,7 @@
 #include "cppunit/TestResult.h"
 #include "cppunit/TestResultCollector.h"
 #include "cppunit/TextOutputter.h"
+#include "cppunit/XmlOutputter.h"
 
 #include "CDlgPasswd.h"
 #include "CDlgTest.h"
@@ -172,6 +173,15 @@ BOOL CRSyncCtrlTestApp::InitInstance()
 		}
 		CppUnit::TextOutputter o(&rc, ofs);
 		o.write();
+
+		//
+		std::ofstream ofs2(fs::current_path().append(L"/test_log2.xml"));
+		if (!ofs.is_open())
+		{
+			AfxMessageBox(L"无法打开日志文件");
+		}
+		CPPUNIT_NS::XmlOutputter xmlOut(&rc, ofs2);
+		xmlOut.write();
 #else
 #endif
 	}

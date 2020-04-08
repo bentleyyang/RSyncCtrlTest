@@ -142,7 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../include;../../include/poco/Crypto/include;../../include/poco/Data/include;../../include/poco/Encodings/include;../../include/poco/Foundation/include;../../include/poco/JSON/include;../../include/poco/Net/include;../../include/poco/Util/include;../../include/poco/XML/include;../../rapidjson/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;../../include/poco/Crypto/include;../../include/poco/Data/include;../../include/poco/Encodings/include;../../include/poco/Foundation/include;../../include/poco/JSON/include;../../include/poco/Net/include;../../include/poco/Util/include;../../include/poco/XML/include;../../rapidjson/include;../../util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -197,8 +197,6 @@
     <ClInclude Include="CommonTestAutoLogout.h" />
     <ClInclude Include="CommonTestManual.h" />
     <ClInclude Include="CommonTestManualLogout.h" />
-    <ClInclude Include="convert.hpp" />
-    <ClInclude Include="filesystem.hpp" />
     <ClInclude Include="InterfaceTest.h" />
     <ClInclude Include="MobileInterfaceTest.h" />
     <ClInclude Include="MobileTestAuto.h" />
