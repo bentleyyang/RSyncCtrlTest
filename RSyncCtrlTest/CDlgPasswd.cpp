@@ -108,23 +108,23 @@ void CDlgPasswd::OnBnClickedOk()
 		{
 			//更新密码至配置文件
 			GValue gtmp;
-			gtmp.SetString(to_utf8(m_PassWord.GetBuffer()).data(), jsonDoc.GetAllocator());
+			gtmp.SetString(to_u8(m_PassWord.GetBuffer()).data(), jsonDoc.GetAllocator());
 			SetValueByPointer(jsonDoc, u8"/密码", gtmp);
-			//SetValueByPointer(jsonDoc, "/password", StringRef(to_utf8(m_PassWord.GetBuffer()).data()));
+			//SetValueByPointer(jsonDoc, "/password", StringRef(to_u8(m_PassWord.GetBuffer()).data()));
 			
-			gtmp.SetString(to_utf8(m_AuthCode.GetBuffer()).data(), jsonDoc.GetAllocator());
+			gtmp.SetString(to_u8(m_AuthCode.GetBuffer()).data(), jsonDoc.GetAllocator());
 			SetValueByPointer(jsonDoc, u8"/授权码", gtmp);
-			gtmp.SetString(to_utf8(m_RsignCloud.GetBuffer()).data(), jsonDoc.GetAllocator());
+			gtmp.SetString(to_u8(m_RsignCloud.GetBuffer()).data(), jsonDoc.GetAllocator());
 			SetValueByPointer(jsonDoc, u8"/服务器地址", gtmp);
-			gtmp.SetString(to_utf8(m_TokenLogin.GetBuffer()).data(), jsonDoc.GetAllocator());
+			gtmp.SetString(to_u8(m_TokenLogin.GetBuffer()).data(), jsonDoc.GetAllocator());
 			SetValueByPointer(jsonDoc, u8"/token/登录token", gtmp);
-			gtmp.SetString(to_utf8(m_TokenEncrypt.GetBuffer()).data(), jsonDoc.GetAllocator());
+			gtmp.SetString(to_u8(m_TokenEncrypt.GetBuffer()).data(), jsonDoc.GetAllocator());
 			SetValueByPointer(jsonDoc, u8"/token/加密token", gtmp);
-			gtmp.SetString(to_utf8(m_TokenDecrypt.GetBuffer()).data(), jsonDoc.GetAllocator());
+			gtmp.SetString(to_u8(m_TokenDecrypt.GetBuffer()).data(), jsonDoc.GetAllocator());
 			SetValueByPointer(jsonDoc, u8"/token/解密token", gtmp);
-			gtmp.SetString(to_utf8(m_TokenSeal.GetBuffer()).data(), jsonDoc.GetAllocator());
+			gtmp.SetString(to_u8(m_TokenSeal.GetBuffer()).data(), jsonDoc.GetAllocator());
 			SetValueByPointer(jsonDoc, u8"/token/签章token", gtmp);
-			gtmp.SetString(to_utf8(m_TokenCert.GetBuffer()).data(), jsonDoc.GetAllocator());
+			gtmp.SetString(to_u8(m_TokenCert.GetBuffer()).data(), jsonDoc.GetAllocator());
 			SetValueByPointer(jsonDoc, u8"/token/证书token", gtmp);
 		}
 

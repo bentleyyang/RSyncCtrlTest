@@ -15,16 +15,8 @@
 
 #include "filesystem.hpp"
 #include "convert.hpp"
-namespace fs { 
-	using namespace std::experimental::filesystem; 
-	using std::ifstream;
-	using std::ofstream;
-	//using namespace util_filesystem;
-};
-
-//TODO: 使用wchar_t
-typedef rapidjson::GenericValue<rapidjson::UTF8<char>> GValue;
-typedef rapidjson::GenericDocument<rapidjson::UTF8<char>> GDoc;
+#include "json.h"
+#include "flossy.h"
 
 
 std::pair<bool, std::wstring> getParameter(const std::wstring& cmd);
@@ -108,13 +100,27 @@ std::pair<bool, std::string> getStrMember(const GDoc& _doc, const CharType(&_mem
 	return { true, o->GetString() };
 }
 
+inline GDoc parseJson(CString &StrJson)
+{
+	using namespace rapidjson;
+	std::string u8 = to_u8(StrJson.GetBuffer());
+
+	fs::ofstream ofs(fs::current_path().append(L"/recv_log.txt"), std::ios::app);
+	ofs << u8 << "\n";
+
+	//CPPUNIT_ASSERT(!u8.empty());//是否收到数据
+	GDoc jsonDoc;
+	jsonDoc.Parse(u8.data());
+	return jsonDoc;
+}
+
 template<typename __Fn>
 inline GDoc parseJson(__Fn _fn)
 {
 	using namespace rapidjson;
 
 	CString StrJson = _fn();
-	std::string u8 = to_utf8(StrJson.GetBuffer());
+	std::string u8 = to_u8(StrJson.GetBuffer());
 
 	fs::ofstream ofs(fs::current_path().append(L"/recv_log.txt"), std::ios::app);
 	ofs << u8 << "\n";
@@ -131,7 +137,7 @@ inline std::pair<bool, std::string> parseJsonAndGetMember(__Fn _fn, const CharTy
 	using namespace rapidjson;
 
 	CString StrJson = _fn();
-	std::string u8 = to_utf8(StrJson.GetBuffer());
+	std::string u8 = to_u8(StrJson.GetBuffer());
 
 	fs::ofstream ofs(fs::current_path().append(L"/recv_log.txt"), std::ios::app);
 	ofs << u8 << "\n";

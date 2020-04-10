@@ -10,9 +10,9 @@ std::pair<bool, std::wstring> getParameter(const std::wstring & cmd)
 	if (hasParseError(jsonDoc)) { return { false, L"" }; }
 	if (!isSuccessful(jsonDoc)) { return { false, L"" }; }
 	if(!jsonDoc.HasMember("data")) { return { false, L"" }; }
-	if (!jsonDoc["data"].HasMember(to_utf8(cmd).data())) { return { false, L"" }; }
+	if (!jsonDoc["data"].HasMember(to_u8(cmd).data())) { return { false, L"" }; }
 
-	return { true, to_wstr(jsonDoc["data"][to_utf8(cmd).data()].GetString()) };
+	return { true, to_wstr(jsonDoc["data"][to_u8(cmd).data()].GetString()) };
 }
 
 bool setParameter(const std::wstring & cmd, const std::wstring & val)
