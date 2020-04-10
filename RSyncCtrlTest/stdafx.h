@@ -141,6 +141,12 @@ u8.append(outputInfo).append(slash);			 \
 u8.append(u8"断言条件：").append(slash);			  \
 assertLogOfs.write(u8.data(), u8.length());}
 
+
+#define LOG_BEG2(fn, ...) \
+CString jsonStr = fn(__VA_ARGS__);\
+LOG_BEG(argsFormat(__VA_ARGS__), to_u8(jsonStr.GetBuffer()));\
+GDoc jsonDoc = parseJson(jsonStr);
+
 #define LOG_END()                                 \
 {std::string u8;									  \
 u8.append(slash).append(slash);					  \
@@ -153,7 +159,7 @@ assertLogOfs.write(u8.data(), u8.length());}		  \
 {std::string u8;																										  \
 u8.append((cond) ? u8"通过" : u8"不通过").append(u8"：").append(u8#cond);													  \
 CPPUNIT_NS::SourceLine location = CPPUNIT_SOURCELINE();																  \
-u8.append(u8"----").append(location.fileName()).append(":").append(std::to_string(location.lineNumber())).append("\n"); \
+u8.append(u8"						").append(location.fileName()).append(":").append(std::to_string(location.lineNumber())).append("\n"); \
 assertLogOfs.write(u8.data(), u8.length());																			  \
 if (!(cond)) { LOG_END();CPPUNIT_ASSERT(cond); return; }}
 #else
