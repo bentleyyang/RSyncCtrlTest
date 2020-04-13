@@ -57,77 +57,8 @@
 
 #include "util.h"
 #include "CDRS_CertSafe.h"
-#include <afxcontrolbars.h>
-#include <afxcontrolbars.h>
 
 #define slash ("\n")
-struct myassert_info
-{
-
-private:
-	struct myassert_detail
-	{
-		std::string condName;
-		std::string file;
-		int line;
-		bool isPass;
-	};
-public:
-	std::string funcName;
-	std::string inputInfo;
-	std::string outputInfo;
-	std::vector<myassert_detail> asserts;
-
-	void begin() {}
-	void add() {}
-	void end() {}
-	std::string makeStr()
-	{
-		std::string u8;
-		u8.append(funcName).append(slash);
-		u8.append(u8"输入：").append(slash);
-		u8.append(inputInfo).append(slash);
-		u8.append(u8"输出：").append(slash);
-		u8.append(outputInfo).append(slash);
-		u8.append(u8"断言条件：").append(slash);
-		for (auto &a:asserts)
-		{
-			u8.append(a.isPass ? u8"通过" : u8"不通过").append(u8"：").append(a.condName);
-			u8.append(u8"(").append(a.file).append(":").append(std::to_string(a.line)).append(u8")");
-		}
-		u8.append(slash).append(slash);
-		u8.append(u8"=======================");
-		u8.append(slash).append(slash);
-	}
-
-
-};
-
-inline void onAssertPass(std::string filename, int line, std::string cond)
-{
-	std::string u8=u8"通过：";
-	u8.append(filename).append(u8"第").append(std::to_string(line)).append(u8"行\n条件：").append(cond).append("\n\n");
-
-	fs::ofstream ofs(fs::current_path().append(L"/通过的测试.txt"), std::ios::binary);
-	if (ofs)
-	{
-		ofs.write(u8.data(), u8.length());
-	}
-}
-inline void myassert(const std::string &msg, bool cond, const std::string &condName,
-	const std::string& file, int line)
-{
-	std::string u8=msg;
-	fs::ofstream ofs(fs::current_path().append(L"/本次测试结果.txt"), std::ios::binary);
-	if (ofs)
-	{
-		ofs.write(u8.data(), u8.length());
-	}
-}
-#define ASSERT2(cond) \
-(myassert(cond); \
-CPPUNIT_NS::SourceLine location=CPPUNIT_SOURCELINE(); \
-onAssertPass(location.fileName(), location.lineNumber(), #cond);)
 
 
 extern fs::ofstream assertLogOfs;
@@ -141,18 +72,21 @@ u8.append(outputInfo).append(slash);			 \
 u8.append(u8"断言条件：").append(slash);			  \
 assertLogOfs.write(u8.data(), u8.length());}
 
+#define _LOG_END0() \
+{std::string u8;									  \
+u8.append(slash).append(slash);					  \
+u8.append(u8"======================================");			  \
+u8.append(slash).append(slash);					  \
+assertLogOfs.write(u8.data(), u8.length()); }
 
 #define LOG_BEG2(fn, ...) \
+for(int i=0;i<1;i++){\
 CString jsonStr = fn(__VA_ARGS__);\
 LOG_BEG(argsFormat(__VA_ARGS__), to_u8(jsonStr.GetBuffer()));\
 GDoc jsonDoc = parseJson(jsonStr);
 
 #define LOG_END()                                 \
-{std::string u8;									  \
-u8.append(slash).append(slash);					  \
-u8.append(u8"======================================");			  \
-u8.append(slash).append(slash);					  \
-assertLogOfs.write(u8.data(), u8.length());}		  \
+_LOG_END0();}
 
 #if 1
 #define LOG_ASSERT(cond)                                                                                              \
@@ -161,7 +95,7 @@ u8.append((cond) ? u8"通过" : u8"不通过").append(u8"：").append(u8#cond);	
 CPPUNIT_NS::SourceLine location = CPPUNIT_SOURCELINE();																  \
 u8.append(u8"						").append(location.fileName()).append(":").append(std::to_string(location.lineNumber())).append("\n"); \
 assertLogOfs.write(u8.data(), u8.length());																			  \
-if (!(cond)) { LOG_END();CPPUNIT_ASSERT(cond); return; }}
+if (!(cond)) { _LOG_END0();CPPUNIT_ASSERT(cond); return; }}
 #else
 #define LOG_ASSERT(cond) CPPUNIT_ASSERT(cond);
 #endif
@@ -190,15 +124,15 @@ inline std::string argsFormat(__Args&&... __a)
 
 
 
-#define REGISTRY_NAME_AUTO "自动化测试部分"
+#define REGISTRY_NAME_AUTO "自动测试部分"
 #define REGISTRY_NAME_MANUAL "手动测试部分"
 #define REGISTRY_NAME_LOGIN "登录测试"
-#define REGISTRY_NAME_LOGOUT "无登录测试(插拔key一次)"
+#define REGISTRY_NAME_LOGOUT "未登录测试(需插拔key一次)"
 
-#define REGISTRY_NAME_AUTO_LOGIN "登录测试(自动测试)"
-#define REGISTRY_NAME_MANUAL_LOGIN "登录测试(手动测试)"
-#define REGISTRY_NAME_AUTO_LOGOUT "无登录测试(插拔key一次)(自动测试)"
-#define REGISTRY_NAME_MANUAL_LOGOUT "无登录测试(插拔key一次)(手动测试)"
+#define REGISTRY_NAME_AUTO_LOGIN "登录测试(自动)"
+#define REGISTRY_NAME_MANUAL_LOGIN "登录测试(手动)"
+#define REGISTRY_NAME_AUTO_LOGOUT "未登录测试(需插拔key一次)(自动)"
+#define REGISTRY_NAME_MANUAL_LOGOUT "未登录测试(需插拔key一次)(手动)"
 
 #define TEST 0
 #define TEST_WITH_INFO_POPUP 1//测试特殊用例时弹出提示信息框（如提示用户拔掉key）

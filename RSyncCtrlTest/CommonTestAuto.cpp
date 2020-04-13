@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CommonTestAuto.h"
+#include <tuple>
 
 CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(CommonTestAuto, REGISTRY_NAME_AUTO_LOGIN);
 CommonTestAuto::CommonTestAuto()
@@ -13,7 +14,7 @@ CommonTestAuto::~CommonTestAuto()
 
 void CommonTestAuto::setUp()
 {
-
+	if (!login()) { AfxMessageBox(L"登录失败，测试用例可能无法进行"); }
 }
 
 void CommonTestAuto::tearDown()
@@ -24,233 +25,260 @@ void CommonTestAuto::tearDown()
 void CommonTestAuto::testGetCertInfo()
 {
 	using namespace rapidjson;
+
+#if 0
 	//预期失败 type不符
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(L"", L"1"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(getCode(jsonDoc)=="9005");
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, L"", L"1");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(getCode(jsonDoc)=="9005");
+		LOG_END();
 	}
 
 	//预期成功
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"1"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, );
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 	}
 
 	//预期失败 type不符
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L""); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(getCode(jsonDoc) == "9015");
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, );
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(getCode(jsonDoc) == "9015");
 	}
 
 	//预期失败
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(L"123456", L"1"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(getCode(jsonDoc) == "9006");
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, );
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(getCode(jsonDoc) == "9006");
 	}
 
 	//预期失败
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"123456"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(getCode(jsonDoc) == "9016");
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, );
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(getCode(jsonDoc) == "9016");
 	}
 
-#if UNNECISSARY_ASSERT
+#endif
+
+#if 1
 	//预期失败1 type不符
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"-1"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"-1");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
+		LOG_END();
 	}
 
 	//预期失败2 证书不符
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(L"#$^%$&@fg", L"1"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, L"#$^%$&@fg", L"1");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
+		LOG_END();
 	}
 
 	//预期成功1 证书版本
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"1"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"1");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功2 证书序列号
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"2"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"2");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功3 证书颁发者信息
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"5"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"5");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功4 证书拥有者信息
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"7"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"7");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功5 证书有效期
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"6"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"6");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功6 证书颁发者CN
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"33"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"33");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功7 证书颁发者O
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"34"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"34");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功8 证书颁发者OU
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"35"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"35");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功9 证书拥有者信息CN
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"49"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"49");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功10 证书拥有者信息O
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"50"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"50");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功11 证书拥有者信息OU
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"51"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"51");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功12 证书拥有者信息EMAIL
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"52"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"52");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功13 个人证书身份证号
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"53"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"53");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功14 企业统一社会信用代码
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"54"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"54");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功15 证书使用者密钥标识符
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"55"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"55");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 
 	//预期成功16 证书唯一码
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetCertInfo(_RS_CERT_ENCRYPT, L"300"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertInfo, _RS_CERT_ENCRYPT, L"300");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
-		CPPUNIT_ASSERT(info&&info->IsString());
+		LOG_ASSERT(info&&info->IsString());
+		LOG_END();
 	}
 #endif
 
@@ -266,59 +294,75 @@ void CommonTestAuto::testConfigParameters()
 
 	//预期成功1
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"authCode", L""); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		std::wstring valtoset = L"5673673567";
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_ConfigParameters, L"authCode", valtoset.data());
+		auto res = getParameter(L"authCode");
+		LOG_ASSERT(res.first);
+		LOG_ASSERT(res.second==valtoset);
+		LOG_END();
 	}
 
 	//预期成功2
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"rsigncloud", L""); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		std::wstring valtoset = L"5673673567";
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_ConfigParameters, L"rsigncloud", valtoset.data());
+		auto res = getParameter(L"rsigncloud");
+		LOG_ASSERT(res.first);
+		LOG_ASSERT(res.second == valtoset);
+		LOG_END();
 	}
 
 	//预期成功3
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"authType", L""); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		std::wstring valtoset = L"5673673567";
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_ConfigParameters, L"authType", valtoset.data());
+		auto res = getParameter(L"authType");
+		LOG_ASSERT(res.first);
+		LOG_ASSERT(res.second == valtoset);
+		LOG_END();
 	}
 
 	//预期成功4
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"keySn", L""); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		std::wstring valtoset = L"5673673567";
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_ConfigParameters, L"keySn", valtoset.data());
+		auto res = getParameter(L"keySn");
+		LOG_ASSERT(res.first);
+		LOG_ASSERT(res.second == valtoset);
+		LOG_END();
 	}
 
 	//预期成功5
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"signAndVerify", L""); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		std::wstring valtoset = L"5673673567";
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_ConfigParameters, L"signAndVerify", valtoset.data());
+		auto res = getParameter(L"signAndVerify");
+		LOG_ASSERT(res.first);
+		LOG_ASSERT(res.second == valtoset);
+		LOG_END();
 	}
 
+#if UNNECISSARY_ASSERT
 	//预期失败 cmd不符
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"#&&#s", L""); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		std::wstring valtoset = L"5673673567";
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_ConfigParameters, L"#&&#s", valtoset.data());
+		auto res = getParameter(L"#&&#s");
+		LOG_ASSERT(res.first);
+		LOG_ASSERT(res.second == valtoset);
+		LOG_END();
 	}
 
 	//预期失败 cmd对应的值不符
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParameters(L"authCode", L"$%*cv"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		std::wstring valtoset = L"$%*cv";
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_ConfigParameters, L"authCode", valtoset.data());
+		auto res = getParameter(L"authCode");
+		LOG_ASSERT(res.first);
+		LOG_ASSERT(res.second == valtoset);
+		LOG_END();
 	}
+#endif
 }
 
 void CommonTestAuto::testConfigParamsByBussSys()
@@ -331,25 +375,25 @@ void CommonTestAuto::testConfigParamsByBussSys()
 	//预期成功
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParamsByBussSys(L"bussName", L""); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 	}
 
 	//预期失败 cmd不符
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParamsByBussSys(L"@#^fdg", L""); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
 	}
 
 	//预期失败 项目名称不符
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_ConfigParamsByBussSys(L"bussName", L"fghsdfg"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
 	}
 }
 
@@ -357,68 +401,73 @@ void CommonTestAuto::testGetParameters()
 {
 	using namespace rapidjson;
 
-	const wchar_t* cmds[] = { L"authCode", L"rsigncloud", L"authType", L"keySn", L"signAndVerify" };
 	//预期成功
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L"authCode"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetParameters, L"authCode");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* authCode = GetValueByPointer(jsonDoc, "/data/authCode");//TODO: 与文档说明的不一致
-		CPPUNIT_ASSERT(authCode&&authCode->IsString());
+		LOG_ASSERT(authCode&&authCode->IsString());
+		LOG_END();
 	}
 
 	//预期成功
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L"rsigncloud"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetParameters, L"rsigncloud");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* rsigncloud = GetValueByPointer(jsonDoc, "/data/rsigncloud");
-		CPPUNIT_ASSERT(rsigncloud&&rsigncloud->IsString());
+		LOG_ASSERT(rsigncloud&&rsigncloud->IsString());
+		LOG_END();
 	}
 
 	//预期成功
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L"authType"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetParameters, L"authType");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* authType = GetValueByPointer(jsonDoc, "/data/authType");
-		CPPUNIT_ASSERT(authType&&authType->IsString());
+		LOG_ASSERT(authType&&authType->IsString());
+		LOG_END();
 	}
 
 	//预期成功
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L"keySn"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetParameters, L"keySn");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* keySn = GetValueByPointer(jsonDoc, "/data/keySn");
-		CPPUNIT_ASSERT(keySn&&keySn->IsString());
+		LOG_ASSERT(keySn&&keySn->IsString());
+		LOG_END();
 	}
 
 	//预期成功
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L"signAndVerify"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetParameters, L"signAndVerify");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* signAndVerify = GetValueByPointer(jsonDoc, "/data/signAndVerify");
-		CPPUNIT_ASSERT(signAndVerify&&signAndVerify->IsString());
+		LOG_ASSERT(signAndVerify&&signAndVerify->IsString());
+		LOG_END();
 	}
 
 	//预期失败1
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetParameters(L""); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetParameters, L"");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
+		LOG_END();
 	}
 }
 
@@ -428,73 +477,59 @@ void CommonTestAuto::testVerifySignByP7()
 {
 	using namespace rapidjson;
 
-	CPPUNIT_ASSERT(login());
-
+	auto fnGetSign = [](const std::wstring &type)->std::pair<bool, std::string> 
+	{
+		bool isSignSuccessful = true;
+		std::string signedMsgContent;
+		GDoc jsonDoc = parseJson([&type]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, type.data(), _RS_CONTAINER_ID); });
+		isSignSuccessful = isSignSuccessful && (!hasParseError(jsonDoc));
+		isSignSuccessful = isSignSuccessful && (hasCode(jsonDoc));
+		isSignSuccessful = isSignSuccessful && (isSuccessful(jsonDoc));
+		const Value* signdMsg = GetValueByPointer(jsonDoc, "/data/signdMsg");
+		isSignSuccessful = isSignSuccessful && (signdMsg&&signdMsg->IsString());
+		signedMsgContent = signdMsg->GetString();
+		return { isSignSuccessful, signedMsgContent };
+	};
+	
 	//预期成功1 不带原文
 	{
-		//获取signedMsg
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"1", _RS_CONTAINER_ID); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
-
-		const Value* signdMsg = GetValueByPointer(jsonDoc, "/data/signdMsg");
-		CPPUNIT_ASSERT(signdMsg&&signdMsg->IsString());
-		std::string signedMsgContent = signdMsg->GetString();
-
-		{
-			GDoc jsonDoc = parseJson([&signedMsgContent]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP7(TEST_DATA_W, to_wstr(signedMsgContent).data(), L"1"); });
-			CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-			CPPUNIT_ASSERT(hasCode(jsonDoc));
-			CPPUNIT_ASSERT(isSuccessful(jsonDoc));
-		}
+		auto signRes = fnGetSign(L"1");//获取signedMsg
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_VerifySignByP7, TEST_DATA_W, to_wstr(signRes.second).data(), L"1");
+		LOG_ASSERT(signRes.first);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
+		LOG_END();
 	}
 	//预期成功2 带原文
 	{
-		//获取signedMsg
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"0", _RS_CONTAINER_ID); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
-
-		const Value* signdMsg = GetValueByPointer(jsonDoc, "/data/signdMsg");
-		CPPUNIT_ASSERT(signdMsg&&signdMsg->IsString());
-		std::string signedMsgContent = signdMsg->GetString();
-
-		{
-			GDoc jsonDoc = parseJson([&signedMsgContent]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP7(L"", to_wstr(signedMsgContent).data(), L"0"); });
-			CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-			CPPUNIT_ASSERT(hasCode(jsonDoc));
-			CPPUNIT_ASSERT(isSuccessful(jsonDoc));
-		}
+		auto signRes = fnGetSign(L"0");//获取signedMsg
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_VerifySignByP7, TEST_DATA_W, to_wstr(signRes.second).data(), L"0");
+		LOG_ASSERT(signRes.first);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
+		LOG_END();
 	}
 
 	//预期失败1 签名值格式错误
 	{
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP7(TEST_DATA_W, L"43673456547", L"1"); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_VerifySignByP7, TEST_DATA_W, L"43673456547", L"1");
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
+		LOG_END();
 	}
 
 	//预期失败2 flag不符合实际
 	{
-		//获取signedMsg
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_KeySignByP7(TEST_DATA_W, L"1", _RS_CONTAINER_ID); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
-
-		const Value* signdMsg = GetValueByPointer(jsonDoc, "/data/signdMsg");
-		CPPUNIT_ASSERT(signdMsg&&signdMsg->IsString());
-		std::string signedMsgContent = signdMsg->GetString();
-
-		{
-			GDoc jsonDoc = parseJson([&signedMsgContent]()->CString {return s_pDRS_CertSafeCtrl->RS_VerifySignByP7(L"", to_wstr(signedMsgContent).data(), L"0"); });
-			CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-			CPPUNIT_ASSERT(hasCode(jsonDoc));
-			CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
-		}
+		auto signRes = fnGetSign(L"1");//获取signedMsg
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_VerifySignByP7, L"", to_wstr(signRes.second).data(), L"0");
+		LOG_ASSERT(signRes.first);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
+		LOG_END();
 	}
 }
 
@@ -506,34 +541,41 @@ void CommonTestAuto::testEncryptFile()
 
 	//预期成功1
 	{
+		bool isFileCreated = true;
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
 		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
-		CPPUNIT_ASSERT(ofs);
+		isFileCreated = isFileCreated && (ofs);
 		ofs.write(TEST_DATA, sizeof(TEST_DATA)-1);
-		CPPUNIT_ASSERT(ofs);
+		isFileCreated = isFileCreated && (ofs);
 		ofs.close();
-		CPPUNIT_ASSERT(fs::exists(inFile));
-		GDoc jsonDoc = parseJson([&inFile, &outFile]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptFile(inFile.data(), outFile.data()); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		isFileCreated = isFileCreated && (fs::exists(inFile));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_EncryptFile, inFile.data(), outFile.data());
+		LOG_ASSERT(isFileCreated);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* symKey = GetValueByPointer(jsonDoc, "/data/symKey");
-		CPPUNIT_ASSERT(symKey&&symKey->IsString());
-		CPPUNIT_ASSERT(fs::exists(outFile));
+		LOG_ASSERT(symKey&&symKey->IsString());
+		LOG_ASSERT(fs::exists(outFile));
+		LOG_END();
 	}
 
 	//预期失败1 原文件不存在
 	{
 		//TODO: 这里是直接收到空数据，没有code
+		bool isFileNotCreated = true;
 		std::wstring inFile = L"C:/agag2342sdfgsfg";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		CPPUNIT_ASSERT(!fs::exists(inFile));
-		GDoc jsonDoc = parseJson([&inFile, &outFile]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptFile(inFile.data(), outFile.data()); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
+		isFileNotCreated = isFileNotCreated && (!fs::exists(inFile));
+
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_EncryptFile, inFile.data(), outFile.data());
+		LOG_ASSERT(isFileNotCreated);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
+		LOG_END();
 	}
 }
 
@@ -541,76 +583,66 @@ void CommonTestAuto::testDevryptFile()
 {
 	using namespace rapidjson;
 
-	//预期成功1
+	auto fn = []()->std::tuple<bool, std::wstring, std::string> 
 	{
+		bool isCreatedFile = true;
 		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
 		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
 		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
-		CPPUNIT_ASSERT(ofs);
+		isCreatedFile = isCreatedFile && (ofs);
 		ofs.write(TEST_DATA, sizeof(TEST_DATA) - 1);
-		CPPUNIT_ASSERT(ofs);
+		isCreatedFile = isCreatedFile && (ofs);
 		ofs.close();
-		CPPUNIT_ASSERT(fs::exists(inFile));
+		isCreatedFile = isCreatedFile && (fs::exists(inFile));
 		GDoc jsonDoc = parseJson([&inFile, &outFile]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptFile(inFile.data(), outFile.data()); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		isCreatedFile = isCreatedFile && (!hasParseError(jsonDoc));
+		isCreatedFile = isCreatedFile && (hasCode(jsonDoc));
+		isCreatedFile = isCreatedFile && (isSuccessful(jsonDoc));
 
 		const Value* symKey = GetValueByPointer(jsonDoc, "/data/symKey");
-		CPPUNIT_ASSERT(symKey&&symKey->IsString());
-		CPPUNIT_ASSERT(fs::exists(outFile));
+		isCreatedFile = isCreatedFile && (symKey&&symKey->IsString());
+		isCreatedFile = isCreatedFile && (fs::exists(outFile));
+		return { isCreatedFile, outFile, isCreatedFile ? symKey->GetString() : "" };
+	};
+	//预期成功1
+	{
+		auto encryptInfo = fn();
+		bool isEncrypted = std::get<0>(encryptInfo);
+		std::wstring outFile = std::get<1>(encryptInfo);
+		std::string symkey = std::get<2>(encryptInfo);
+		std::wstring decryptOutFile = fs::current_path().wstring() + L"/test_decrypt_file_out.txt";
+		//LOG_ASSERT(copy_file(path(outFile), path(decryptInFile), copy_options::overwrite_existing));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_DevryptFile, to_wstr(symkey).data(), outFile.data(), decryptOutFile.data());
+		LOG_ASSERT(isEncrypted);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
+		LOG_ASSERT(fs::exists(decryptOutFile));
 
-		//
-		{
-			//std::wstring decryptInFile = std::experimental::filesystem::current_path().wstring() + L"/test_decrypt_file_in.sm4";
-			std::wstring decryptOutFile = fs::current_path().wstring() + L"/test_decrypt_file_out.txt";
-			//CPPUNIT_ASSERT(copy_file(path(outFile), path(decryptInFile), copy_options::overwrite_existing));
-			GDoc jsonDoc = parseJson([&decryptOutFile, &symKey, &outFile]()->CString {return s_pDRS_CertSafeCtrl->RS_DevryptFile(to_wstr(symKey->GetString()).data(), outFile.data(), decryptOutFile.data()); });
-			CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-			CPPUNIT_ASSERT(hasCode(jsonDoc));
-			CPPUNIT_ASSERT(isSuccessful(jsonDoc));
-			CPPUNIT_ASSERT(fs::exists(decryptOutFile));
+		fs::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
+		char tt[sizeof(TEST_DATA) - 1];
+		ifs.read(tt, sizeof(TEST_DATA) - 1);
+		LOG_ASSERT(ifs);
+		LOG_ASSERT(std::equal(tt, tt + (sizeof(TEST_DATA) - 1), TEST_DATA));
 
-
-
-			fs::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
-			char tt[sizeof(TEST_DATA) - 1];
-			ifs.read(tt, sizeof(TEST_DATA) - 1);
-			CPPUNIT_ASSERT(ifs);
-			CPPUNIT_ASSERT(std::equal(tt, tt + (sizeof(TEST_DATA) - 1), TEST_DATA));
-
-			//TODO: 这里测试的结果，源文件只有4个字节长度，解密后的文件，虽然前4个字节是正确的，但是整个文件会强制变成128字节，并且后面的是乱码
-			CPPUNIT_ASSERT(fs::file_size(fs::path(decryptOutFile)) == (sizeof(TEST_DATA) - 1));
-		}
+		//TODO: 这里测试的结果，源文件只有4个字节长度，解密后的文件，虽然前4个字节是正确的，但是整个文件会强制变成128字节，并且后面的是乱码
+		LOG_ASSERT(fs::file_size(fs::path(decryptOutFile)) == (sizeof(TEST_DATA) - 1));
+		LOG_END();
 	}
 
 	//预期失败1 symKey与密文不匹配
 	{
-		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
-		CPPUNIT_ASSERT(ofs);
-		ofs.write(TEST_DATA, sizeof(TEST_DATA) - 1);
-		CPPUNIT_ASSERT(ofs);
-		ofs.close();
-		CPPUNIT_ASSERT(fs::exists(inFile));
-		GDoc jsonDoc = parseJson([&inFile, &outFile]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptFile(inFile.data(), outFile.data()); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
-
-		const Value* symKey = GetValueByPointer(jsonDoc, "/data/symKey");
-		CPPUNIT_ASSERT(symKey&&symKey->IsString());
-		CPPUNIT_ASSERT(fs::exists(outFile));
-
-		//
-		{
-			std::wstring decryptOutFile = fs::current_path().wstring() + L"/test_decrypt_file_out.txt";
-			GDoc jsonDoc = parseJson([&decryptOutFile, &outFile]()->CString {return s_pDRS_CertSafeCtrl->RS_DevryptFile(L"astgagh#$%^$#@^afhsha", outFile.data(), decryptOutFile.data()); });
-			CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-			CPPUNIT_ASSERT(hasCode(jsonDoc));
-			CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
-		}
+		auto encryptInfo = fn();
+		bool isEncrypted = std::get<0>(encryptInfo);
+		std::wstring outFile = std::get<1>(encryptInfo);
+		std::string symkey = std::get<2>(encryptInfo);
+		std::wstring decryptOutFile = fs::current_path().wstring() + L"/test_decrypt_file_out.txt";
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_DevryptFile, L"astgagh#$%^$#@^afhsha", outFile.data(), decryptOutFile.data());
+		LOG_ASSERT(isEncrypted);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
+		LOG_END();
 	}
 }
 
@@ -619,19 +651,19 @@ void CommonTestAuto::testEncryptData()
 	using namespace rapidjson;
 	//预期成功1
 	{
-
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptData(TEST_DATA_W); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_EncryptData, TEST_DATA_W);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
 		const Value* symKey = GetValueByPointer(jsonDoc, "/data/symKey");
-		CPPUNIT_ASSERT(symKey&&symKey->IsString());
+		LOG_ASSERT(symKey&&symKey->IsString());
 		std::string symKeyContent = symKey->GetString();
 
 		const Value* encDataStr = GetValueByPointer(jsonDoc, "/data/encDataStr");
-		CPPUNIT_ASSERT(encDataStr&&encDataStr->IsString());
+		LOG_ASSERT(encDataStr&&encDataStr->IsString());
 		std::string encDataStrContent = encDataStr->GetString();
+		LOG_END();
 	}
 
 	////预期失败1 待加密数据长度大于1024
@@ -639,92 +671,78 @@ void CommonTestAuto::testEncryptData()
 	//	std::vector<wchar_t> tt(1024, L'A' ); tt[1023] = L'\0';
 	//
 	//	GDoc jsonDoc = parseJson([&tt]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptData(tt.data()); });
-	//	CPPUNIT_ASSERT(!parseError(jsonDoc));
+	//	LOG_ASSERT(!parseError(jsonDoc));
 	//	const Value* code = GetValueByPointer(jsonDoc, "/code");
-	//	CPPUNIT_ASSERT(code&&code->IsString());
+	//	LOG_ASSERT(code&&code->IsString());
 	//	std::string strCode = code->GetString();
-	//	CPPUNIT_ASSERT(strCode != "0000");
+	//	LOG_ASSERT(strCode != "0000");
 	//}
 }
 
 void CommonTestAuto::testDevryptData()
 {
 	using namespace rapidjson;
-	//预期成功1
-	{
 
+	auto fn = []()->std::tuple<bool, std::string, std::string> 
+	{
+		bool isEncrypted = true;
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptData(TEST_DATA_W); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
+		isEncrypted = isEncrypted && (!hasParseError(jsonDoc));
+		isEncrypted = isEncrypted && (hasCode(jsonDoc));
+		isEncrypted = isEncrypted && (isSuccessful(jsonDoc));
 
 		const Value* symKey = GetValueByPointer(jsonDoc, "/data/symKey");
-		CPPUNIT_ASSERT(symKey&&symKey->IsString());
+		isEncrypted = isEncrypted && (symKey&&symKey->IsString());
 		std::string symKeyContent = symKey->GetString();
 
 		const Value* encDataStr = GetValueByPointer(jsonDoc, "/data/encDataStr");
-		CPPUNIT_ASSERT(encDataStr&&encDataStr->IsString());
+		isEncrypted = isEncrypted && (encDataStr&&encDataStr->IsString());
 		std::string encDataStrContent = encDataStr->GetString();
+		return { isEncrypted, isEncrypted ? symKeyContent : "", isEncrypted ? encDataStrContent : "" };
+	};
+	//预期成功1
+	{
+		auto encryptInfo = fn();
+		bool isEncrypt = std::get<0>(encryptInfo);
+		std::string symkey = std::get<1>(encryptInfo);
+		std::string encDataStr = std::get<2>(encryptInfo);
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_DevryptData, to_wstr(symkey).data(), to_wstr(encDataStr).data());
+		LOG_ASSERT(isEncrypt);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
 
-		{
-			GDoc jsonDoc = parseJson([&symKeyContent, &encDataStrContent]()->CString {return s_pDRS_CertSafeCtrl->RS_DevryptData(to_wstr(symKeyContent).data(), to_wstr(encDataStrContent).data()); });
-			CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-			CPPUNIT_ASSERT(hasCode(jsonDoc));
-			CPPUNIT_ASSERT(isSuccessful(jsonDoc));
-
-			const Value* dncDataStr = GetValueByPointer(jsonDoc, "/data/dncDataStr");
-			std::string dncDataContent = dncDataStr->GetString();
-			CPPUNIT_ASSERT(dncDataContent == TEST_DATA);
-		}
+		const Value* dncDataStr = GetValueByPointer(jsonDoc, "/data/dncDataStr");
+		std::string dncDataContent = dncDataStr->GetString();
+		LOG_ASSERT(dncDataContent == TEST_DATA);
+		LOG_END();
 	}
 
 	//预期失败1 密钥不符
 	{
-
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptData(TEST_DATA_W); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
-
-		const Value* symKey = GetValueByPointer(jsonDoc, "/data/symKey");
-		CPPUNIT_ASSERT(symKey&&symKey->IsString());
-		std::string symKeyContent = symKey->GetString();
-
-		const Value* encDataStr = GetValueByPointer(jsonDoc, "/data/encDataStr");
-		CPPUNIT_ASSERT(encDataStr&&encDataStr->IsString());
-		std::string encDataStrContent = encDataStr->GetString();
-
-		{
-			GDoc jsonDoc = parseJson([&symKeyContent, &encDataStrContent]()->CString {return s_pDRS_CertSafeCtrl->RS_DevryptData(L"$%^FGH", to_wstr(encDataStrContent).data()); });
-			CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-			CPPUNIT_ASSERT(hasCode(jsonDoc));
-			CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
-
-		}
+		auto encryptInfo = fn();
+		bool isEncrypt = std::get<0>(encryptInfo);
+		std::string symkey = std::get<1>(encryptInfo);
+		std::string encDataStr = std::get<2>(encryptInfo);
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_DevryptData, L"$%^FGH", to_wstr(encDataStr).data());
+		LOG_ASSERT(isEncrypt);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
+		LOG_END();
 	}
 
 	//预期失败1 密文不符
 	{
-
-		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptData(TEST_DATA_W); });
-		CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-		CPPUNIT_ASSERT(hasCode(jsonDoc));
-		CPPUNIT_ASSERT(isSuccessful(jsonDoc));
-
-		const Value* symKey = GetValueByPointer(jsonDoc, "/data/symKey");
-		CPPUNIT_ASSERT(symKey&&symKey->IsString());
-		std::string symKeyContent = symKey->GetString();
-
-		const Value* encDataStr = GetValueByPointer(jsonDoc, "/data/encDataStr");
-		CPPUNIT_ASSERT(encDataStr&&encDataStr->IsString());
-		std::string encDataStrContent = encDataStr->GetString();
-
-		{
-			GDoc jsonDoc = parseJson([&symKeyContent, &encDataStrContent]()->CString {return s_pDRS_CertSafeCtrl->RS_DevryptData(to_wstr(symKeyContent).data(), L"4321"); });
-			CPPUNIT_ASSERT(!hasParseError(jsonDoc));
-			CPPUNIT_ASSERT(hasCode(jsonDoc));
-			CPPUNIT_ASSERT(!isSuccessful(jsonDoc));
-
-		}
+		auto encryptInfo = fn();
+		bool isEncrypt = std::get<0>(encryptInfo);
+		std::string symkey = std::get<1>(encryptInfo);
+		std::string encDataStr = std::get<2>(encryptInfo);
+		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_DevryptData, to_wstr(symkey).data(), L"4321");
+		LOG_ASSERT(isEncrypt);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
+		LOG_END();
 	}
 }
