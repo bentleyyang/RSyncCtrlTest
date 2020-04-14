@@ -96,7 +96,7 @@ void CDlgPasswd::OnBnClickedOk()
 	}
 
 	using namespace rapidjson;
-	fs::path path_conf = fs::path(fs::current_path().append("/config.json"));
+	std::wstring path_conf = to_wstr(Poco::Path::current()+("config.json"));
 
 	if (!login(m_PassWord.GetBuffer()))
 	{
@@ -165,11 +165,9 @@ void CDlgPasswd::OnBnClickedOk()
 
 		{
 			//保存配置文件
-			std::error_code ec;
-			fs::copy_file(path_conf.wstring(), path_conf.wstring() + L".bac", fs::copy_options::overwrite_existing, ec);
-			if (ec) { AfxMessageBox(L"config.json备份错误"); return; }
+			Poco::File(to_u8(path_conf)).copyTo(to_u8(path_conf+(L".bac")));
 			std::string to_write = jsonDocToStr(jsonDoc);
-			fs::ofstream ofs(path_conf, std::ios::binary);
+			Poco::FileOutputStream ofs(to_u8(path_conf), std::ios::binary);
 			ofs.write(to_write.data(), to_write.length());
 			if (ofs.fail()) { AfxMessageBox(L"config.json写入错误"); return; }
 		}
@@ -190,15 +188,15 @@ BOOL CDlgPasswd::OnInitDialog()
 	auto exitFn = [this]()->BOOL {CDialogEx::OnCancel(); return TRUE; };
 
 	using namespace rapidjson;
-	fs::path path_conf = fs::path(fs::current_path().append("/config.json"));
+	std::wstring path_conf = to_wstr(Poco::Path::current()+("config.json"));
 
 	{
 		//手机云证等参数读取
 		std::error_code ec;
-		uint64_t len = fs::file_size(path_conf, ec);
+		uint64_t len = Poco::File(to_u8(path_conf)).getSize();
 		if (ec) { AfxMessageBox(L"config.json不存在"); return exitFn(); }
 		std::vector<char> u8(len + 1, '\0');
-		fs::ifstream ifs(path_conf, std::ios::binary);
+		Poco::FileInputStream ifs(to_u8(path_conf), std::ios::binary);
 		ifs.read(u8.data(), len);
 		if (ifs.fail()) { AfxMessageBox(L"config.json读取错误"); return exitFn(); }
 		jsonDoc.Parse(uint8_t(u8[0]) == 0xef ? u8.data() + 3 : u8.data());

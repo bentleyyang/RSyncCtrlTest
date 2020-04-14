@@ -61,7 +61,7 @@
 #define slash ("\n")
 
 
-extern fs::ofstream assertLogOfs;
+extern Poco::FileOutputStream assertLogOfs;
 #define LOG_BEG(inputInfo, outputInfo) \
 {std::string u8;									 \
 u8.append(__func__).append(slash);				 \

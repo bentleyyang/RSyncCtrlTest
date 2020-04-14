@@ -6,7 +6,7 @@
 #include "stdafx.h"
 
 
-fs::ofstream assertLogOfs(fs::current_path().append(L"/测试结果.txt"), std::ios::binary);
+Poco::FileOutputStream assertLogOfs(Poco::Path::current()+(u8"测试结果.txt"), std::ios::binary);
 
 CDRS_CertSafe* s_pDRS_CertSafeCtrl = NULL;
 HWND s_hMainWnd = NULL;

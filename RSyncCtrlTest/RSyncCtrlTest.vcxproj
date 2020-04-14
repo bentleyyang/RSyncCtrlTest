@@ -23,7 +23,7 @@
     <ProjectGuid>{E7BE736E-AA5E-4835-B583-2CC7AF571193}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
     <RootNamespace>RSyncCtrlTest</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -193,13 +193,10 @@
     <ClInclude Include="CDlgPasswd.h" />
     <ClInclude Include="CDlgTest.h" />
     <ClInclude Include="CDRS_CertSafe.h" />
-    <ClInclude Include="CommonInterfaceTest.h" />
     <ClInclude Include="CommonTestAuto.h" />
     <ClInclude Include="CommonTestAutoLogout.h" />
     <ClInclude Include="CommonTestManual.h" />
     <ClInclude Include="CommonTestManualLogout.h" />
-    <ClInclude Include="InterfaceTest.h" />
-    <ClInclude Include="MobileInterfaceTest.h" />
     <ClInclude Include="MobileTestAuto.h" />
     <ClInclude Include="MobileTestAutoLogout.h" />
     <ClInclude Include="MobileTestManual.h" />
@@ -209,7 +206,6 @@
     <ClInclude Include="SpecificTest.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="UkeyInterfaceTest.h" />
     <ClInclude Include="UkeyTestAuto.h" />
     <ClInclude Include="UkeyTestAutoLogout.h" />
     <ClInclude Include="UkeyTestManual.h" />
@@ -220,13 +216,10 @@
     <ClCompile Include="CDlgPasswd.cpp" />
     <ClCompile Include="CDlgTest.cpp" />
     <ClCompile Include="CDRS_CertSafe.cpp" />
-    <ClCompile Include="CommonInterfaceTest.cpp" />
     <ClCompile Include="CommonTestAuto.cpp" />
     <ClCompile Include="CommonTestAutoLogout.cpp" />
     <ClCompile Include="CommonTestManual.cpp" />
     <ClCompile Include="CommonTestManualLogout.cpp" />
-    <ClCompile Include="InterfaceTest.cpp" />
-    <ClCompile Include="MobileInterfaceTest.cpp" />
     <ClCompile Include="MobileTestAuto.cpp" />
     <ClCompile Include="MobileTestAutoLogout.cpp" />
     <ClCompile Include="MobileTestManual.cpp" />
@@ -239,7 +232,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="UkeyInterfaceTest.cpp" />
     <ClCompile Include="UkeyTestAuto.cpp" />
     <ClCompile Include="UkeyTestAutoLogout.cpp" />
     <ClCompile Include="UkeyTestManual.cpp" />

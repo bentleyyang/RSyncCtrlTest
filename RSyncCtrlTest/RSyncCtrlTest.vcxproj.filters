@@ -27,18 +27,6 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="InterfaceTest.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="CommonInterfaceTest.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="UkeyInterfaceTest.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MobileInterfaceTest.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="util.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -96,18 +84,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="InterfaceTest.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="CommonInterfaceTest.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="UkeyInterfaceTest.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MobileInterfaceTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="util.cpp">
