@@ -619,14 +619,14 @@ void CommonTestAuto::testDevryptFile()
 		LOG_ASSERT(isSuccessful(jsonDoc));
 		LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).exists());
 
-		fs::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
+		Poco::FileInputStream ifs(to_u8(decryptOutFile), std::ios::binary);
 		char tt[sizeof(TEST_DATA) - 1];
 		ifs.read(tt, sizeof(TEST_DATA) - 1);
 		LOG_ASSERT(ifs);
 		LOG_ASSERT(std::equal(tt, tt + (sizeof(TEST_DATA) - 1), TEST_DATA));
 
 		//TODO: 这里测试的结果，源文件只有4个字节长度，解密后的文件，虽然前4个字节是正确的，但是整个文件会强制变成128字节，并且后面的是乱码
-		LOG_ASSERT(fs::file_size(fs::path(decryptOutFile)) == (sizeof(TEST_DATA) - 1));
+		LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).getSize() == (sizeof(TEST_DATA) - 1));
 		LOG_END();
 	}
 

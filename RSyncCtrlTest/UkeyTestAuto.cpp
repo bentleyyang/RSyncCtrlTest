@@ -633,21 +633,21 @@ void UkeyTestAuto::testKeyEncryptFile()
 	//预期成功1
 	{
 		bool isFileCreated = true;
-		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
+		std::wstring inFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_in.txt";
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
+		Poco::FileStream ofs(to_u8(inFile), std::ios::binary);
 		isFileCreated = isFileCreated && (ofs);
 		ofs.write(TEST_DATA, sizeof(TEST_DATA)-1);
 		isFileCreated = isFileCreated && (ofs);
 		ofs.close();
-		isFileCreated = isFileCreated && (fs::exists(inFile));
+		isFileCreated = isFileCreated && (Poco::File(to_u8(inFile)).exists());
 
 		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyEncryptFile, inFile.data(), outFile.data(), _RS_CERT_ENCRYPT);
 		LOG_ASSERT(isFileCreated);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_ASSERT(fs::exists(outFile));
+		LOG_ASSERT(Poco::File(to_u8(outFile)).exists());
 		LOG_END();
 	}
 
@@ -656,8 +656,8 @@ void UkeyTestAuto::testKeyEncryptFile()
 		//TODO: 这里是直接收到空数据，没有code
 		bool isFileNotExists = true;
 		std::wstring inFile = L"C:/agag2342sdfgsfg";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		isFileNotExists = isFileNotExists && (!fs::exists(inFile));
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
+		isFileNotExists = isFileNotExists && (!Poco::File(to_u8(inFile)).exists());
 
 		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyEncryptFile, inFile.data(), outFile.data(), _RS_CERT_ENCRYPT);
 		LOG_ASSERT(isFileNotExists);
@@ -675,39 +675,39 @@ void UkeyTestAuto::testKeyDecryptFile()
 	//预期成功1
 	{
 		bool isEncrypted = true;
-		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
+		std::wstring inFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_in.txt";
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
+		Poco::FileStream ofs(to_u8(inFile), std::ios::binary);
 		isEncrypted = isEncrypted && (ofs);
 		ofs.write(TEST_DATA, sizeof(TEST_DATA)-1);
 		isEncrypted = isEncrypted && (ofs);
 		ofs.close();
-		isEncrypted = isEncrypted && (fs::exists(inFile));
+		isEncrypted = isEncrypted && (Poco::File(to_u8(inFile)).exists());
 
 		GDoc jsonDoc = parseJson([&inFile, &outFile]()->CString {return s_pDRS_CertSafeCtrl->RS_KeyEncryptFile(inFile.data(), outFile.data(), _RS_CERT_ENCRYPT); });
 		isEncrypted = isEncrypted && (!hasParseError(jsonDoc));
 		isEncrypted = isEncrypted && (hasCode(jsonDoc));
 		isEncrypted = isEncrypted && (isSuccessful(jsonDoc));
 
-		isEncrypted = isEncrypted && (fs::exists(outFile));
+		isEncrypted = isEncrypted && (Poco::File(to_u8(outFile)).exists());
 
 		{
-			std::wstring decryptOutFile = fs::current_path().wstring() + L"/test_decrypt_file_out.txt";
+			std::wstring decryptOutFile = to_wstr(Poco::Path::current()) + L"test_decrypt_file_out.txt";
 			LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyDecryptFile, outFile.data(), decryptOutFile.data(), _RS_CONTAINER_ID);
 			LOG_ASSERT(isEncrypted);
 			LOG_ASSERT(!hasParseError(jsonDoc));
 			LOG_ASSERT(hasCode(jsonDoc));
 			LOG_ASSERT(isSuccessful(jsonDoc));
-			LOG_ASSERT(fs::exists(decryptOutFile));
+			LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).exists());
 
-			fs::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
+			Poco::FileInputStream ifs(to_u8(decryptOutFile), std::ios::binary);
 			char tt[sizeof(TEST_DATA) - 1];
 			ifs.read(tt, sizeof(TEST_DATA) - 1);
 			LOG_ASSERT(ifs);
 			LOG_ASSERT(std::equal(tt, tt + (sizeof(TEST_DATA) - 1), TEST_DATA));
 
 			//TODO: 这里测试的结果，源文件只有4个字节长度，解密后的文件，虽然前4个字节是正确的，但是整个文件会强制变成128字节，并且后面的是乱码
-			LOG_ASSERT(fs::file_size(fs::path(decryptOutFile)) == (sizeof(TEST_DATA) - 1));
+			LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).getSize() == (sizeof(TEST_DATA) - 1));
 			LOG_END();
 		}
 	}

@@ -4,7 +4,6 @@
 
 #include "stdafx.h"
 #include "RSyncCtrlTest.h"
-#include "RSyncCtrlTestDlg.h"
 #include "CDRS_CertSafe.h"
 
 #include <experimental/filesystem>

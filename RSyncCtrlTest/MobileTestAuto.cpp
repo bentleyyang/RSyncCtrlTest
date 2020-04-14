@@ -153,12 +153,12 @@ void MobileTestAuto::testGreateQRCode()
 
 	//预期成功
 	{
-		std::wstring outFile = fs::current_path().wstring() + L"/test_create_qrcode_out.bmp";
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_create_qrcode_out.bmp";
 		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GreateQRCode, TEST_DATA_W, outFile.data());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_ASSERT(fs::exists(fs::path(outFile)));
+		LOG_ASSERT(Poco::File(to_u8(outFile)).exists());
 		LOG_END();
 	}
 
@@ -166,7 +166,7 @@ void MobileTestAuto::testGreateQRCode()
 	{
 		std::wstring outFile = L"lsdkfjgl";
 		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GreateQRCode, TEST_DATA_W, outFile.data());
-		LOG_ASSERT(!fs::exists(fs::path(outFile)));
+		LOG_ASSERT(!Poco::File(to_u8(outFile)).exists());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
@@ -366,14 +366,14 @@ void MobileTestAuto::testCloudEncryptFile()
 	auto fn = []()->std::tuple<bool, std::wstring, std::wstring> 
 	{
 		bool isFileCreated = true;
-		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
+		std::wstring inFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_in.txt";
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
+		Poco::FileStream ofs(to_u8(inFile), std::ios::binary);
 		isFileCreated = isFileCreated && (ofs);
 		ofs.write(TEST_DATA, sizeof(TEST_DATA) - 1);
 		isFileCreated = isFileCreated && (ofs);
 		ofs.close();
-		isFileCreated = isFileCreated && (fs::exists(inFile));
+		isFileCreated = isFileCreated && (Poco::File(to_u8(inFile)).exists());
 		return { isFileCreated, inFile, outFile };
 	};
 
@@ -391,7 +391,7 @@ void MobileTestAuto::testCloudEncryptFile()
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_ASSERT(fs::exists(outFile));
+		LOG_ASSERT(Poco::File(to_u8(outFile)).exists());
 
 		auto signCertBase64 = getStrMember(jsonDoc, "/data/signCertBase64");
 		LOG_ASSERT(signCertBase64.first);
@@ -408,8 +408,8 @@ void MobileTestAuto::testCloudEncryptFile()
 		//TODO: 这里是直接收到空数据，没有code
 		bool isFileNotCreated = true;
 		std::wstring inFile = L"C:/agag2342sdfgsfg";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		isFileNotCreated = isFileNotCreated && (!fs::exists(inFile));
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
+		isFileNotCreated = isFileNotCreated && (!Poco::File(to_u8(inFile)).exists());
 
 		transId = getTransid();
 		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudEncryptFile, inFile.data(), outFile.data(), transId.data(), token.data());
@@ -475,14 +475,14 @@ void MobileTestAuto::testEncryptFileBase64()
 	auto fn = []()->std::tuple<bool, std::wstring, std::wstring>
 	{
 		bool isCreatedFile = true;
-		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
+		std::wstring inFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_in.txt";
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
+		Poco::FileStream ofs(to_u8(inFile), std::ios::binary);
 		isCreatedFile = isCreatedFile && (ofs);
 		ofs.write(TEST_DATA, sizeof(TEST_DATA) - 1);
 		isCreatedFile = isCreatedFile && (ofs);
 		ofs.close();
-		isCreatedFile = isCreatedFile && (fs::exists(inFile));
+		isCreatedFile = isCreatedFile && (Poco::File(to_u8(inFile)).exists());
 		return { isCreatedFile, inFile, outFile };
 	};
 
@@ -498,7 +498,7 @@ void MobileTestAuto::testEncryptFileBase64()
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_ASSERT(fs::exists(outFile));
+		LOG_ASSERT(Poco::File(to_u8(outFile)).exists());
 		LOG_END();
 	}
 
@@ -507,8 +507,8 @@ void MobileTestAuto::testEncryptFileBase64()
 		//TODO: 这里是直接收到空数据，没有code
 		bool isFileNotCreated;
 		std::wstring inFile = L"C:/agag2342sdfgsfg";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		isFileNotCreated=(!fs::exists(inFile));
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
+		isFileNotCreated=(!Poco::File(to_u8(inFile)).exists());
 		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_EncryptFileBase64, inFile.data(), outFile.data(), _RS_CERT_ENCRYPT);
 		LOG_ASSERT(isFileNotCreated);
 		LOG_ASSERT(!hasParseError(jsonDoc));
@@ -625,21 +625,21 @@ void MobileTestAuto::testCloudDevryptFile()
 		token = getEncryptToken();
 		isEncrypted = isEncrypted && (!transId.empty());
 		isEncrypted = isEncrypted && (!token.empty());
-		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
+		std::wstring inFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_in.txt";
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
+		Poco::FileStream ofs(to_u8(inFile), std::ios::binary);
 		isEncrypted = isEncrypted && (ofs);
 		ofs.write(TEST_DATA, sizeof(TEST_DATA) - 1);
 		isEncrypted = isEncrypted && (ofs);
 		ofs.close();
-		isEncrypted = isEncrypted && (fs::exists(inFile));
+		isEncrypted = isEncrypted && (Poco::File(to_u8(inFile)).exists());
 		
 
 		GDoc jsonDoc = parseJson([&transId, &token, &inFile, &outFile]()->CString { return s_pDRS_CertSafeCtrl->RS_CloudEncryptFile(inFile.data(), outFile.data(), transId.data(), token.data()); });
 		isEncrypted = isEncrypted && (!hasParseError(jsonDoc));
 		isEncrypted = isEncrypted && (hasCode(jsonDoc));
 		isEncrypted = isEncrypted && (isSuccessful(jsonDoc));
-		isEncrypted = isEncrypted && (fs::exists(outFile));
+		isEncrypted = isEncrypted && (Poco::File(to_u8(outFile)).exists());
 
 		auto signCertBase64 = getStrMember(jsonDoc, "/data/signCertBase64");
 		isEncrypted = isEncrypted && (signCertBase64.first);
@@ -660,7 +660,7 @@ void MobileTestAuto::testCloudDevryptFile()
 		std::wstring outFile;
 		std::tie(isEncrypted, outFile) = fn();
 		//解密
-		std::wstring decryptOutFile = fs::current_path().wstring() + L"/test_decrypt_file_out.txt";
+		std::wstring decryptOutFile = to_wstr(Poco::Path::current()) + L"test_decrypt_file_out.txt";
 		transId = getTransid();
 		token = getDecryptToken();
 
@@ -671,16 +671,16 @@ void MobileTestAuto::testCloudDevryptFile()
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_ASSERT(fs::exists(decryptOutFile));
+		LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).exists());
 
-		fs::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
+		Poco::FileInputStream ifs(to_u8(decryptOutFile), std::ios::binary);
 		char tt[sizeof(TEST_DATA) - 1];
 		ifs.read(tt, sizeof(TEST_DATA) - 1);
 		LOG_ASSERT(ifs);
 		LOG_ASSERT(std::equal(tt, tt + (sizeof(TEST_DATA) - 1), TEST_DATA));
 
 		//TODO: 这里测试的结果，源文件只有4个字节长度，解密后的文件，虽然前4个字节是正确的，但是整个文件会强制变成128字节，并且后面的是乱码
-		LOG_ASSERT(fs::file_size(fs::path(decryptOutFile)) == (sizeof(TEST_DATA) - 1));
+		LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).getSize() == (sizeof(TEST_DATA) - 1));
 		LOG_END();
 	}
 

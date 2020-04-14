@@ -18,9 +18,6 @@
     <ClInclude Include="RSyncCtrlTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RSyncCtrlTestDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -96,9 +93,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RSyncCtrlTest.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RSyncCtrlTestDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
