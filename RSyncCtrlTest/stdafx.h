@@ -70,14 +70,16 @@ u8.append(inputInfo).append(slash);				 \
 u8.append(u8"输出：").append(slash);			   \
 u8.append(outputInfo).append(slash);			 \
 u8.append(u8"断言条件：").append(slash);			  \
-assertLogOfs.write(u8.data(), u8.length());}
+assertLogOfs.write(u8.data(), u8.length());\
+OutputDebugStringW(to_wstr(u8).data());}
 
 #define _LOG_END0() \
 {std::string u8;									  \
 u8.append(slash).append(slash);					  \
 u8.append(u8"======================================");			  \
 u8.append(slash).append(slash);					  \
-assertLogOfs.write(u8.data(), u8.length()); }
+assertLogOfs.write(u8.data(), u8.length()); \
+OutputDebugStringW(to_wstr(u8).data()); }
 
 #define LOG_BEG2(fn, ...) \
 for(int i=0;i<1;i++){\
@@ -95,6 +97,7 @@ u8.append((cond) ? u8"通过" : u8"不通过").append(u8"：").append(u8#cond);	
 CPPUNIT_NS::SourceLine location = CPPUNIT_SOURCELINE();																  \
 u8.append(u8"			位置").append(location.fileName()).append(":").append(std::to_string(location.lineNumber())).append("\n"); \
 assertLogOfs.write(u8.data(), u8.length());																			  \
+OutputDebugStringW(to_wstr(u8).data());\
 if (!(cond)) { _LOG_END0();CPPUNIT_ASSERT(cond); return; }}
 #else
 #define LOG_ASSERT(cond) CPPUNIT_ASSERT(cond);

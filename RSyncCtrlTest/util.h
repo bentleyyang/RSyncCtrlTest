@@ -8,6 +8,10 @@
 #include <vector>
 
 #include "Poco/UnicodeConverter.h"
+#include "Poco/FileStream.h"
+#include "Poco/File.h"
+#include "Poco/Path.h"
+
 #include "rapidjson/rapidjson.h"
 #include "rapidjson/document.h"
 #include "rapidjson/pointer.h"

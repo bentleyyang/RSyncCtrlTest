@@ -542,14 +542,14 @@ void CommonTestAuto::testEncryptFile()
 	//预期成功1
 	{
 		bool isFileCreated = true;
-		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
+		std::wstring inFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_in.txt";
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
+		Poco::FileStream ofs(to_u8(inFile), std::ios::binary);
 		isFileCreated = isFileCreated && (ofs);
 		ofs.write(TEST_DATA, sizeof(TEST_DATA)-1);
 		isFileCreated = isFileCreated && (ofs);
 		ofs.close();
-		isFileCreated = isFileCreated && (fs::exists(inFile));
+		isFileCreated = isFileCreated && (Poco::File(to_u8(inFile)).exists());
 		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_EncryptFile, inFile.data(), outFile.data());
 		LOG_ASSERT(isFileCreated);
 		LOG_ASSERT(!hasParseError(jsonDoc));
@@ -558,7 +558,7 @@ void CommonTestAuto::testEncryptFile()
 
 		const Value* symKey = GetValueByPointer(jsonDoc, "/data/symKey");
 		LOG_ASSERT(symKey&&symKey->IsString());
-		LOG_ASSERT(fs::exists(outFile));
+		LOG_ASSERT(Poco::File(to_u8(outFile)).exists());
 		LOG_END();
 	}
 
@@ -567,8 +567,8 @@ void CommonTestAuto::testEncryptFile()
 		//TODO: 这里是直接收到空数据，没有code
 		bool isFileNotCreated = true;
 		std::wstring inFile = L"C:/agag2342sdfgsfg";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		isFileNotCreated = isFileNotCreated && (!fs::exists(inFile));
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
+		isFileNotCreated = isFileNotCreated && (!Poco::File(to_u8(inFile)).exists());
 
 		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_EncryptFile, inFile.data(), outFile.data());
 		LOG_ASSERT(isFileNotCreated);
@@ -586,14 +586,14 @@ void CommonTestAuto::testDevryptFile()
 	auto fn = []()->std::tuple<bool, std::wstring, std::string> 
 	{
 		bool isCreatedFile = true;
-		std::wstring inFile = fs::current_path().wstring() + L"/test_encrypt_file_in.txt";
-		std::wstring outFile = fs::current_path().wstring() + L"/test_encrypt_file_out.txt";
-		fs::ofstream ofs(fs::path(inFile), std::ios::binary);
+		std::wstring inFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_in.txt";
+		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
+		Poco::FileStream ofs(to_u8(inFile), std::ios::binary);
 		isCreatedFile = isCreatedFile && (ofs);
 		ofs.write(TEST_DATA, sizeof(TEST_DATA) - 1);
 		isCreatedFile = isCreatedFile && (ofs);
 		ofs.close();
-		isCreatedFile = isCreatedFile && (fs::exists(inFile));
+		isCreatedFile = isCreatedFile && (Poco::File(to_u8(inFile)).exists());
 		GDoc jsonDoc = parseJson([&inFile, &outFile]()->CString {return s_pDRS_CertSafeCtrl->RS_EncryptFile(inFile.data(), outFile.data()); });
 		isCreatedFile = isCreatedFile && (!hasParseError(jsonDoc));
 		isCreatedFile = isCreatedFile && (hasCode(jsonDoc));
@@ -601,7 +601,7 @@ void CommonTestAuto::testDevryptFile()
 
 		const Value* symKey = GetValueByPointer(jsonDoc, "/data/symKey");
 		isCreatedFile = isCreatedFile && (symKey&&symKey->IsString());
-		isCreatedFile = isCreatedFile && (fs::exists(outFile));
+		isCreatedFile = isCreatedFile && (Poco::File(to_u8(outFile)).exists());
 		return { isCreatedFile, outFile, isCreatedFile ? symKey->GetString() : "" };
 	};
 	//预期成功1
@@ -610,14 +610,14 @@ void CommonTestAuto::testDevryptFile()
 		bool isEncrypted = std::get<0>(encryptInfo);
 		std::wstring outFile = std::get<1>(encryptInfo);
 		std::string symkey = std::get<2>(encryptInfo);
-		std::wstring decryptOutFile = fs::current_path().wstring() + L"/test_decrypt_file_out.txt";
+		std::wstring decryptOutFile = to_wstr(Poco::Path::current()) + L"test_decrypt_file_out.txt";
 		//LOG_ASSERT(copy_file(path(outFile), path(decryptInFile), copy_options::overwrite_existing));
 		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_DevryptFile, to_wstr(symkey).data(), outFile.data(), decryptOutFile.data());
 		LOG_ASSERT(isEncrypted);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_ASSERT(fs::exists(decryptOutFile));
+		LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).exists());
 
 		fs::ifstream ifs(fs::path(decryptOutFile), std::ios::binary);
 		char tt[sizeof(TEST_DATA) - 1];
@@ -636,7 +636,7 @@ void CommonTestAuto::testDevryptFile()
 		bool isEncrypted = std::get<0>(encryptInfo);
 		std::wstring outFile = std::get<1>(encryptInfo);
 		std::string symkey = std::get<2>(encryptInfo);
-		std::wstring decryptOutFile = fs::current_path().wstring() + L"/test_decrypt_file_out.txt";
+		std::wstring decryptOutFile = to_wstr(Poco::Path::current()) + L"test_decrypt_file_out.txt";
 		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_DevryptFile, L"astgagh#$%^$#@^afhsha", outFile.data(), decryptOutFile.data());
 		LOG_ASSERT(isEncrypted);
 		LOG_ASSERT(!hasParseError(jsonDoc));

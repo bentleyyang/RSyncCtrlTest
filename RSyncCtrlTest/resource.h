@@ -2,10 +2,14 @@
 // Microsoft Visual C++ 生成的包含文件。
 // 供 RSyncCtrlTest.rc 使用
 //
-#define Major                           0
+#define Major                           1
 #define MAIN                            1
 #define FileIndex                       1
-#define Minor                           4
+#define Minor                           0
+
+#define VTSFILEVERSION			MAIN,Major,Minor,FileIndex
+#define VTSFILEVERSION_STR		STRINGIZE(MAIN) "." STRINGIZE(Major) "." STRINGIZE(Minor) "." STRINGIZE(FileIndex)
+
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
 #define IDS_ABOUTBOX                    101

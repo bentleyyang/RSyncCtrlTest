@@ -30,9 +30,6 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CDRS_CertSafe.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="InterfaceTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -93,6 +90,9 @@
     <ClInclude Include="SpecificTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CDRS_CertSafe.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RSyncCtrlTest.cpp">
@@ -102,9 +102,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="CDRS_CertSafe.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="InterfaceTest.cpp">
@@ -165,6 +162,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SpecificTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CDRS_CertSafe.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
