@@ -11,14 +11,21 @@
 #include "Poco/File.h"
 #include "Poco/Path.h"
 
+#if 0
+#include "Poco/JSON/Parser.h"
+#include "Poco/Dynamic/Struct.h"
+typedef Poco::DynamicStruct GDoc;
+#else
+
 #include "rapidjson/rapidjson.h"
 #include "rapidjson/document.h"
 #include "rapidjson/pointer.h"
 #include "rapidjson/prettywriter.h"
-
-#include "filesystem.hpp"
-#include "convert.hpp"
 #include "json.h"
+#endif
+
+//#include "filesystem.hpp"
+#include "convert.hpp"
 #include "flossy.h"
 
 
