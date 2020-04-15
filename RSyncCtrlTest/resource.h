@@ -2,10 +2,10 @@
 // Microsoft Visual C++ 生成的包含文件。
 // 供 RSyncCtrlTest.rc 使用
 //
+#define Minor                           0
 #define Major                           1
 #define MAIN                            1
 #define FileIndex                       1
-#define Minor                           0
 
 #define VTSFILEVERSION			MAIN,Major,Minor,FileIndex
 #define VTSFILEVERSION_STR		STRINGIZE(MAIN) "." STRINGIZE(Major) "." STRINGIZE(Minor) "." STRINGIZE(FileIndex)
@@ -28,6 +28,7 @@
 #define IDC_EDIT6                       1007
 #define IDC_EDIT7                       1008
 #define IDC_EDIT8                       1009
+#define IDC_EDIT9                       1010
 
 // Next default values for new objects
 // 

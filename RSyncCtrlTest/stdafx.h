@@ -82,7 +82,7 @@ assertLogOfs.write(u8.data(), u8.length()); \
 OutputDebugStringW(to_wstr(u8).data()); }
 
 #define LOG_BEG2(fn, ...) \
-for(int i=0;i<1;i++){\
+for(int i=0;i<m_TimePerTest;i++){\
 CString jsonStr = fn(__VA_ARGS__);\
 LOG_BEG(argsFormat(__VA_ARGS__), to_u8(jsonStr.GetBuffer()));\
 GDoc jsonDoc = parseJson(jsonStr);
@@ -163,6 +163,7 @@ extern CString m_TokenEncrypt;
 extern CString m_TokenDecrypt;
 extern CString m_TokenSeal;
 extern CString m_TokenCert;
+extern uint32_t m_TimePerTest;
 
 extern std::vector<seal> m_SealList;
 

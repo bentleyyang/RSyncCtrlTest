@@ -6,7 +6,7 @@
 #include "stdafx.h"
 
 
-Poco::FileOutputStream assertLogOfs(Poco::Path::current()+(u8"测试结果.txt"), std::ios::binary);
+Poco::FileOutputStream assertLogOfs(Poco::Path::current()+(u8"测试结果.txt"), std::ios::binary|std::ios::trunc);
 
 CDRS_CertSafe* s_pDRS_CertSafeCtrl = NULL;
 HWND s_hMainWnd = NULL;
@@ -24,6 +24,7 @@ CString m_TokenEncrypt;
 CString m_TokenDecrypt;
 CString m_TokenSeal;
 CString m_TokenCert;
+uint32_t m_TimePerTest=1;
 
 std::vector<seal> m_SealList;
 

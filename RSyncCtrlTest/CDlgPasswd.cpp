@@ -35,6 +35,7 @@ void CDlgPasswd::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT6, m_etTokenDecrypt);
 	DDX_Control(pDX, IDC_EDIT7, m_etTokenSeal);
 	DDX_Control(pDX, IDC_EDIT8, m_etTokenCert);
+	DDX_Control(pDX, IDC_EDIT9, m_etTimePerTest);
 }
 
 
@@ -58,6 +59,7 @@ void CDlgPasswd::OnBnClickedOk()
 	GetDlgItemText(IDC_EDIT6, m_strTokenDecrypt);
 	GetDlgItemText(IDC_EDIT7, m_strTokenSeal);
 	GetDlgItemText(IDC_EDIT8, m_strTokenCert);
+	GetDlgItemText(IDC_EDIT9, m_strTimePerTest);
 
 	m_PassWord = m_strPw;
 	m_AuthCode = m_strAuthCode;
@@ -67,6 +69,7 @@ void CDlgPasswd::OnBnClickedOk()
 	m_TokenDecrypt = m_strTokenDecrypt;
 	m_TokenSeal = m_strTokenSeal;
 	m_TokenCert = m_strTokenCert;
+	m_TimePerTest = std::stoul(m_strTimePerTest.GetBuffer());
 
 	{
 		//获取ukey的containerId
@@ -126,6 +129,8 @@ void CDlgPasswd::OnBnClickedOk()
 			SetValueByPointer(jsonDoc, u8"/token/签章token", gtmp);
 			gtmp.SetString(to_u8(m_TokenCert.GetBuffer()).data(), jsonDoc.GetAllocator());
 			SetValueByPointer(jsonDoc, u8"/token/证书token", gtmp);
+
+			SetValueByPointer(jsonDoc, u8"/time per test", m_TimePerTest);
 		}
 
 
@@ -167,7 +172,7 @@ void CDlgPasswd::OnBnClickedOk()
 			//保存配置文件
 			Poco::File(to_u8(path_conf)).copyTo(to_u8(path_conf+(L".bac")));
 			std::string to_write = jsonDocToStr(jsonDoc);
-			Poco::FileOutputStream ofs(to_u8(path_conf), std::ios::binary);
+			Poco::FileOutputStream ofs(to_u8(path_conf), std::ios::binary|std::ios::trunc);
 			ofs.write(to_write.data(), to_write.length());
 			if (ofs.fail()) { AfxMessageBox(L"config.json写入错误"); return; }
 		}
@@ -209,8 +214,9 @@ BOOL CDlgPasswd::OnInitDialog()
 		const Value* password = GetValueByPointer(jsonDoc, u8"/密码");
 		const Value* authCode = GetValueByPointer(jsonDoc, u8"/授权码");
 		const Value* rsigncloud = GetValueByPointer(jsonDoc, u8"/服务器地址");
+		const Value* time_per_test = GetValueByPointer(jsonDoc, u8"/time per test");
 		if (!token_login || !token_encrypt || !token_decrypt || !token_seal || !token_cert || !password
-			|| !authCode || !rsigncloud) {
+			|| !authCode || !rsigncloud/* || !time_per_test*/) {
 			AfxMessageBox(L"config.json解析错误"); return exitFn();
 		}
 
@@ -222,6 +228,7 @@ BOOL CDlgPasswd::OnInitDialog()
 		m_PassWord = to_wstr(password->GetString()).data();
 		m_AuthCode = to_wstr(authCode->GetString()).data();
 		m_RsignCloud = to_wstr(rsigncloud->GetString()).data();
+		m_TimePerTest = time_per_test ? time_per_test->GetUint() : 1;
 
 	}
 
@@ -234,6 +241,8 @@ BOOL CDlgPasswd::OnInitDialog()
 		SetDlgItemText(IDC_EDIT6, m_TokenDecrypt);
 		SetDlgItemText(IDC_EDIT7, m_TokenSeal);
 		SetDlgItemText(IDC_EDIT8, m_TokenCert);
+
+		m_etTimePerTest.SetWindowTextW(std::to_wstring(m_TimePerTest).data());
 	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control

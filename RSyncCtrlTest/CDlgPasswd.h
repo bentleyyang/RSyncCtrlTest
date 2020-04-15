@@ -33,6 +33,7 @@ private:
 	CEdit m_etTokenDecrypt;
 	CEdit m_etTokenSeal;
 	CEdit m_etTokenCert;
+	CEdit m_etTimePerTest;
 
 	CString m_strPw;
 	CString m_strAuthCode;
@@ -42,6 +43,7 @@ private:
 	CString m_strTokenDecrypt;
 	CString m_strTokenSeal;
 	CString m_strTokenCert;
+	CString m_strTimePerTest;
 
 private:
 	GDoc jsonDoc;//配置文件
