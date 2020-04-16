@@ -3,7 +3,7 @@
 #include "util.h"
 
 CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(MobileTestAuto, REGISTRY_NAME_AUTO_LOGIN);
-MobileTestAuto::MobileTestAuto()
+MobileTestAuto::MobileTestAuto() :isLogin(false)
 {
 }
 
@@ -15,7 +15,9 @@ MobileTestAuto::~MobileTestAuto()
 void MobileTestAuto::setUp()
 {
 	//TODO: 会调用多次，可以减少调用次数
+	if (isLogin) { return; }
 	if (!login()) { AfxMessageBox(L"登录失败，测试用例可能无法进行"); }
+	else { isLogin = true; }
 }
 
 void MobileTestAuto::tearDown()

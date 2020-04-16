@@ -3,7 +3,7 @@
 #include <tuple>
 
 CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(CommonTestAuto, REGISTRY_NAME_AUTO_LOGIN);
-CommonTestAuto::CommonTestAuto()
+CommonTestAuto::CommonTestAuto() :isLogin(false)
 {
 }
 
@@ -14,7 +14,9 @@ CommonTestAuto::~CommonTestAuto()
 
 void CommonTestAuto::setUp()
 {
+	if (isLogin) { return; }
 	if (!login()) { AfxMessageBox(L"登录失败，测试用例可能无法进行"); }
+	else { isLogin = true; }
 }
 
 void CommonTestAuto::tearDown()

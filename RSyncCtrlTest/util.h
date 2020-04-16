@@ -36,6 +36,7 @@ bool getUserlist(std::vector<std::pair<std::wstring, std::wstring>>& dst);
 bool login();
 bool login(const std::wstring& pw);
 bool logout();
+std::pair<bool, int32_t> getRetryPinCount();
 std::wstring getTransid();
 std::wstring getLoginToken();
 std::wstring getEncryptToken();

@@ -68,14 +68,9 @@ bool login()
 
 	//先获取密码重试次数，保证不被锁住
 	{
-		auto retryCount = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetPinRetryCount(_RS_CONTAINER_ID); }, "/data/retryCount");
-		if (!retryCount.first) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
-		std::string retryCountContent = retryCount.second;
-		if (retryCountContent.empty()) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
-		if (!std::all_of(retryCountContent.begin(), retryCountContent.end(), ::isdigit)) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
-		int cnt = atoi(retryCountContent.c_str());
-		if (cnt <= 3) { AfxMessageBox(L"密码重试次数<=3，将结束程序"); ExitProcess(0); }
-
+		auto res = getRetryPinCount();
+		if (!res.first) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); exit(0); return false; }
+		if (res.second <= 3) { AfxMessageBox(L"密码重试次数<=3，将结束程序"); exit(0); return false; }
 	}
 	//预期成功1 不带原文
 	{
@@ -94,14 +89,9 @@ bool login(const std::wstring& pw)
 
 	//先获取密码重试次数，保证不被锁住
 	{
-		auto retryCount = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetPinRetryCount(_RS_CONTAINER_ID); }, "/data/retryCount");
-		if (!retryCount.first) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
-		std::string retryCountContent = retryCount.second;
-		if (retryCountContent.empty()) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
-		if (!std::all_of(retryCountContent.begin(), retryCountContent.end(), ::isdigit)) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
-		int cnt = atoi(retryCountContent.c_str());
-		if (cnt <= 3) { AfxMessageBox(L"密码重试次数<=3，将结束程序"); ExitProcess(0); }
-
+		auto res = getRetryPinCount();
+		if (!res.first) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); exit(0); return false; }
+		if (res.second <= 3) { AfxMessageBox(L"密码重试次数<=3，将结束程序"); exit(0); return false; }
 	}
 	//预期成功1 不带原文
 	{
@@ -128,6 +118,17 @@ bool logout()
 		std::string strCode = code->GetString();
 		return strCode == "0000";
 	}
+}
+
+std::pair<bool, int32_t> getRetryPinCount()
+{
+	auto retryCount = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetPinRetryCount(_RS_CONTAINER_ID); }, "/data/retryCount");
+	if (!retryCount.first) { return { false, 0 }; }
+	std::string retryCountContent = retryCount.second;
+	if (retryCountContent.empty()) { return { false, 0 }; }
+	if (!std::all_of(retryCountContent.begin(), retryCountContent.end(), ::isdigit)) { return { false, 0 }; }
+	int cnt = atoi(retryCountContent.c_str());
+	return { true, cnt };
 }
 
 std::wstring getTransid()

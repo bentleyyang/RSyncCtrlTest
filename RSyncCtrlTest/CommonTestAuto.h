@@ -21,6 +21,9 @@ public:
 	void setUp();
 	void tearDown();
 
+private:
+	bool isLogin;
+
 public:
 	void testConfigParameters();
 	void testConfigParamsByBussSys();

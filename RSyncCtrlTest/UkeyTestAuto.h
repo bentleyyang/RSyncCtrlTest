@@ -32,6 +32,8 @@ public:
 
 	void setUp();
 	void tearDown();
+private:
+	bool isLogin;
 public:
 	void testGetUserList();
 	void testGetCertBase64String();
