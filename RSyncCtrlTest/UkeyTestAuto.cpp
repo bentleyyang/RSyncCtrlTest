@@ -19,12 +19,12 @@ void UkeyTestAuto::setUp()
 	//先获取密码重试次数，保证不被锁住
 	{
 		auto retryCount = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetPinRetryCount(_RS_CONTAINER_ID); }, "/data/retryCount");
-		if (!retryCount.first) { AfxMessageBox(L"setup失败"); }
+		if (!retryCount.first) { AfxMessageBox(L"获取密码重试次数失败，将结束程序");ExitProcess(0); }
 		std::string retryCountContent = retryCount.second;
-		if (retryCountContent.empty()) { AfxMessageBox(L"setup失败"); }
-		if (!std::all_of(retryCountContent.begin(), retryCountContent.end(), ::isdigit)) { AfxMessageBox(L"setup失败"); }
+		if (retryCountContent.empty()) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
+		if (!std::all_of(retryCountContent.begin(), retryCountContent.end(), ::isdigit)) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
 		int cnt = atoi(retryCountContent.c_str());
-		if (cnt <= 3) { AfxMessageBox(L"setup失败"); }
+		if (cnt <= 3) { AfxMessageBox(L"密码重试次数<=3，将结束程序"); ExitProcess(0); }
 
 	}
 }
@@ -39,7 +39,8 @@ void UkeyTestAuto::testGetUserList()
 	using namespace rapidjson;
 	//预期成功1
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetUserList);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetUserList);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -47,7 +48,7 @@ void UkeyTestAuto::testGetUserList()
 		const Value* userlist = GetValueByPointer(jsonDoc, "/data/userlist");
 		LOG_ASSERT(userlist&&userlist->IsString());
 		std::wstring userlistContent = to_wstr(userlist->GetString());
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
@@ -62,7 +63,8 @@ void UkeyTestAuto::testGetCertBase64String()
 
 	//预期成功1
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, 1);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, 1);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -70,12 +72,13 @@ void UkeyTestAuto::testGetCertBase64String()
 		const Value* certBase64 = GetValueByPointer(jsonDoc, "/data/certBase64");
 		LOG_ASSERT(certBase64&&certBase64->IsString());
 		std::string certBase64Content = certBase64->GetString();
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期成功2
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, 2);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, 2);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -83,89 +86,99 @@ void UkeyTestAuto::testGetCertBase64String()
 		const Value* certBase64 = GetValueByPointer(jsonDoc, "/data/certBase64");
 		LOG_ASSERT(certBase64&&certBase64->IsString());
 		std::string certBase64Content = certBase64->GetString();
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"", 1);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"", 1);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc)=="9003");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"", 2);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"", 2);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9003");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"123456", 1);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"123456", 1);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9004");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"123456", 2);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"123456", 2);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9004");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"B2810FDB-B11C-4D78-", 1);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"B2810FDB-B11C-4D78-", 1);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9004");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"B2810FDB-B11C-4D78-", 2);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, L"B2810FDB-B11C-4D78-", 2);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9004");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 type不符要求
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, 3);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, 3);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9012");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 type不符要求
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, 0);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, 0);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9012");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 type不符要求
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, -1);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, -1);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9012");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 type不符要求
 	{
 		short tmps[1000];
 		short type= tmps[67];//模拟未初始化
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, type);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetCertBase64String, _RS_CONTAINER_ID, type);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9012");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -175,51 +188,57 @@ void UkeyTestAuto::testCertLogin()
 
 	//预期成功
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CertLogin, _RS_CONTAINER_ID, _RS_PASSWD);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CertLogin, _RS_CONTAINER_ID, _RS_PASSWD);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CertLogin, L"", _RS_PASSWD);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CertLogin, L"", _RS_PASSWD);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc)=="9003");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CertLogin, L"123456", _RS_PASSWD);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CertLogin, L"123456", _RS_PASSWD);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9004");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CertLogin, L"B2810FDB-B11C-4D78-", _RS_PASSWD);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CertLogin, L"B2810FDB-B11C-4D78-", _RS_PASSWD);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9004");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CertLogin, _RS_CONTAINER_ID, L"");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CertLogin, _RS_CONTAINER_ID, L"");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9010");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CertLogin, _RS_CONTAINER_ID, L"0");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CertLogin, _RS_CONTAINER_ID, L"0");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9011");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -229,7 +248,8 @@ void UkeyTestAuto::testGetPinRetryCount()
 
 	//预期成功1
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetPinRetryCount, _RS_CONTAINER_ID);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetPinRetryCount, _RS_CONTAINER_ID);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -239,16 +259,17 @@ void UkeyTestAuto::testGetPinRetryCount()
 		std::string retryCountContent = retryCount->GetString();
 		LOG_ASSERT(!retryCountContent.empty());
 		LOG_ASSERT(std::all_of(retryCountContent.begin(), retryCountContent.end(), ::isdigit));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败1 证书不符
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetPinRetryCount, L"@$^%^%$fd");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetPinRetryCount, L"@$^%^%$fd");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -258,7 +279,8 @@ void UkeyTestAuto::testKeySignByP7()
 
 	//预期成功1 不带原文
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeySignByP7, TEST_DATA_W, L"1", _RS_CONTAINER_ID);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeySignByP7, TEST_DATA_W, L"1", _RS_CONTAINER_ID);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -266,12 +288,13 @@ void UkeyTestAuto::testKeySignByP7()
 		const Value* signdMsg = GetValueByPointer(jsonDoc, "/data/signdMsg");
 		LOG_ASSERT(signdMsg&&signdMsg->IsString());
 		std::string tt = signdMsg->GetString();
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期成功2 带原文
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeySignByP7, TEST_DATA_W, L"0", _RS_CONTAINER_ID);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeySignByP7, TEST_DATA_W, L"0", _RS_CONTAINER_ID);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -279,16 +302,17 @@ void UkeyTestAuto::testKeySignByP7()
 		const Value* signdMsg = GetValueByPointer(jsonDoc, "/data/signdMsg");
 		LOG_ASSERT(signdMsg&&signdMsg->IsString());
 		std::string tt = signdMsg->GetString();
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败1 container_id 不符
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeySignByP7, TEST_DATA_W, L"1", L"random-45634562456");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeySignByP7, TEST_DATA_W, L"1", L"random-45634562456");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -298,7 +322,8 @@ void UkeyTestAuto::testKeySignByP1()
 
 	//预期成功1
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeySignByP1, TEST_DATA_W, _RS_CONTAINER_ID);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeySignByP1, TEST_DATA_W, _RS_CONTAINER_ID);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -306,16 +331,17 @@ void UkeyTestAuto::testKeySignByP1()
 		const Value* signdMsg = GetValueByPointer(jsonDoc, "/data/signdMsg");
 		LOG_ASSERT(signdMsg&&signdMsg->IsString());
 		std::string tt = signdMsg->GetString();
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败1 container_id 不符
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeySignByP1, TEST_DATA_W, L"random-45634562456");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeySignByP1, TEST_DATA_W, L"random-45634562456");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -334,90 +360,99 @@ void UkeyTestAuto::testVerifySignByP1()
 
 		const Value* signdMsg = GetValueByPointer(jsonDoc, "/data/signdMsg");
 		isSignSuccessful = isSignSuccessful && (signdMsg&&signdMsg->IsString());
-		signedMsgContent = signdMsg->GetString();
+		signedMsgContent = isSignSuccessful ? signdMsg->GetString() : "";
 	}
 
 	//预期成功1
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_VerifySignByP1, _RS_CERT_SIGN, TEST_DATA_W, to_wstr(signedMsgContent).data());
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_VerifySignByP1, _RS_CERT_SIGN, TEST_DATA_W, to_wstr(signedMsgContent).data());
 		LOG_ASSERT(isSignSuccessful);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败1 签名证书格式错误
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_VerifySignByP1, L"$%^&%#&SHH", TEST_DATA_W, to_wstr(signedMsgContent).data());
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_VerifySignByP1, L"$%^&%#&SHH", TEST_DATA_W, to_wstr(signedMsgContent).data());
 		LOG_ASSERT(isSignSuccessful);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败2 代签名原文不符
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_VerifySignByP1, _RS_CERT_SIGN, L"4321", to_wstr(signedMsgContent).data());
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_VerifySignByP1, _RS_CERT_SIGN, L"4321", to_wstr(signedMsgContent).data());
 		LOG_ASSERT(isSignSuccessful);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败2 签名值不符
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_VerifySignByP1, _RS_CERT_SIGN, TEST_DATA_W, L"#^@&^$d");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_VerifySignByP1, _RS_CERT_SIGN, TEST_DATA_W, L"#^@&^$d");
 		LOG_ASSERT(isSignSuccessful);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
 void UkeyTestAuto::testChangePassWd()
 {
 	//return;
+	if (m_TimePerTest != 1) { return;/*AfxMessageBox(L"密码连续测试次数不得超过1次");*/ }
 
 	using namespace rapidjson;
 
 	//预期成功1
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_ChangePassWd, _RS_CONTAINER_ID, _RS_PASSWD, L"87654321");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_ChangePassWd, _RS_CONTAINER_ID, _RS_PASSWD, L"87654321");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 containerId 错误
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_ChangePassWd, L"AAAAAAA123", L"87654321", _RS_PASSWD);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_ChangePassWd, L"AAAAAAA123", L"87654321", _RS_PASSWD);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 原密码错误
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_ChangePassWd, _RS_CONTAINER_ID, L"#&%&H", _RS_PASSWD);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_ChangePassWd, _RS_CONTAINER_ID, L"#&%&H", _RS_PASSWD);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期成功，改回初始密码
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_ChangePassWd, _RS_CONTAINER_ID, L"87654321", _RS_PASSWD);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_ChangePassWd, _RS_CONTAINER_ID, L"87654321", _RS_PASSWD);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -426,7 +461,8 @@ void UkeyTestAuto::testVerifyIdentity()
 	using namespace rapidjson;
 	//预期成功1 加密证书
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_VerifyIdentity, _RS_CERT_ENCRYPT, _RS_AUTH_CODE);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_VerifyIdentity, _RS_CERT_ENCRYPT, _RS_AUTH_CODE);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -435,12 +471,13 @@ void UkeyTestAuto::testVerifyIdentity()
 		const Value* data = GetValueByPointer(jsonDoc, "/data");
 		LOG_ASSERT(data&&data->IsString());
 		std::string dataContent = data->GetString();
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期成功2 签名证书
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_VerifyIdentity, _RS_CERT_SIGN, _RS_AUTH_CODE);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_VerifyIdentity, _RS_CERT_SIGN, _RS_AUTH_CODE);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -449,16 +486,17 @@ void UkeyTestAuto::testVerifyIdentity()
 		const Value* data = GetValueByPointer(jsonDoc, "/data");
 		LOG_ASSERT(data&&data->IsString());
 		std::string dataContent = data->GetString();
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败1 证书不符合要求
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_VerifyIdentity, L"kglijdshgsd96785", _RS_AUTH_CODE);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_VerifyIdentity, L"kglijdshgsd96785", _RS_AUTH_CODE);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -466,11 +504,12 @@ void UkeyTestAuto::testKeyGetKeySn()
 {
 	using namespace rapidjson;
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyGetKeySn);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyGetKeySn);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 #if UNNECISSARY_ASSERT
@@ -498,7 +537,8 @@ void UkeyTestAuto::testKeyGetDeviceInfo()
 	using namespace rapidjson;
 	//预期成功1 设备序列号
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyGetDeviceInfo, _RS_CONTAINER_ID, L"1");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyGetDeviceInfo, _RS_CONTAINER_ID, L"1");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -506,16 +546,17 @@ void UkeyTestAuto::testKeyGetDeviceInfo()
 		const Value* info = GetValueByPointer(jsonDoc, "/data/info");
 		LOG_ASSERT(info&&info->IsString());
 		std::string infoContent = info->GetString();
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败1 容器名不符
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyGetDeviceInfo, L"", L"1");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyGetDeviceInfo, L"", L"1");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -535,35 +576,39 @@ void UkeyTestAuto::testKeyEncryptData()
 
 	//预期成功
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyEncryptData, L"123456aAX", _RS_CERT_ENCRYPT);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyEncryptData, L"123456aAX", _RS_CERT_ENCRYPT);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyEncryptData, L"123456aAX", L"");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyEncryptData, L"123456aAX", L"");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc)=="9005");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyEncryptData, L"", _RS_CERT_ENCRYPT);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyEncryptData, L"", _RS_CERT_ENCRYPT);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9023");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyEncryptData, L"123456aAX", L"123456");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyEncryptData, L"123456aAX", L"123456");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(getCode(jsonDoc) == "9024");
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 #if UNNECISSARY_ASSERT
@@ -597,32 +642,35 @@ void UkeyTestAuto::testKeyDecryptData()
 
 	//预期成功1
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyDecryptData, to_wstr(encRsKeyContent).data(), _RS_CONTAINER_ID);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyDecryptData, to_wstr(encRsKeyContent).data(), _RS_CONTAINER_ID);
 		LOG_ASSERT(isEncryptSuccessful);
 		const Value* rsKey = GetValueByPointer(jsonDoc, "/data/rsKey");
 		LOG_ASSERT(rsKey&&rsKey->IsString());
 		std::string rsKeyContent = rsKey->GetString();
 		LOG_ASSERT(rsKeyContent == TEST_DATA);
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败1 待解密密文不符
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyDecryptData, L"sdflk76585", _RS_CONTAINER_ID);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyDecryptData, L"sdflk76585", _RS_CONTAINER_ID);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败1 containerId不符
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyDecryptData, to_wstr(encRsKeyContent).data(), L"kjhjk345");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyDecryptData, to_wstr(encRsKeyContent).data(), L"kjhjk345");
 		LOG_ASSERT(isEncryptSuccessful);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -642,13 +690,14 @@ void UkeyTestAuto::testKeyEncryptFile()
 		ofs.close();
 		isFileCreated = isFileCreated && (Poco::File(to_u8(inFile)).exists());
 
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyEncryptFile, inFile.data(), outFile.data(), _RS_CERT_ENCRYPT);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyEncryptFile, inFile.data(), outFile.data(), _RS_CERT_ENCRYPT);
 		LOG_ASSERT(isFileCreated);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
 		LOG_ASSERT(Poco::File(to_u8(outFile)).exists());
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败1 原文件不存在
@@ -659,12 +708,13 @@ void UkeyTestAuto::testKeyEncryptFile()
 		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
 		isFileNotExists = isFileNotExists && (!Poco::File(to_u8(inFile)).exists());
 
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyEncryptFile, inFile.data(), outFile.data(), _RS_CERT_ENCRYPT);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyEncryptFile, inFile.data(), outFile.data(), _RS_CERT_ENCRYPT);
 		LOG_ASSERT(isFileNotExists);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -672,14 +722,14 @@ void UkeyTestAuto::testKeyDecryptFile()
 {
 	using namespace rapidjson;
 
-	//预期成功1
+	auto fn = []()->std::pair<bool, std::wstring> 
 	{
 		bool isEncrypted = true;
 		std::wstring inFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_in.txt";
 		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
 		Poco::FileStream ofs(to_u8(inFile), std::ios::binary);
 		isEncrypted = isEncrypted && (ofs);
-		ofs.write(TEST_DATA, sizeof(TEST_DATA)-1);
+		ofs.write(TEST_DATA, sizeof(TEST_DATA) - 1);
 		isEncrypted = isEncrypted && (ofs);
 		ofs.close();
 		isEncrypted = isEncrypted && (Poco::File(to_u8(inFile)).exists());
@@ -690,26 +740,48 @@ void UkeyTestAuto::testKeyDecryptFile()
 		isEncrypted = isEncrypted && (isSuccessful(jsonDoc));
 
 		isEncrypted = isEncrypted && (Poco::File(to_u8(outFile)).exists());
+		return { isEncrypted, outFile };
+	};
 
-		{
-			std::wstring decryptOutFile = to_wstr(Poco::Path::current()) + L"test_decrypt_file_out.txt";
-			LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyDecryptFile, outFile.data(), decryptOutFile.data(), _RS_CONTAINER_ID);
-			LOG_ASSERT(isEncrypted);
-			LOG_ASSERT(!hasParseError(jsonDoc));
-			LOG_ASSERT(hasCode(jsonDoc));
-			LOG_ASSERT(isSuccessful(jsonDoc));
-			LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).exists());
+	//预期成功1
+	{
+		auto encryptInfo = fn();
+		bool isEncrypted = std::get<0>(encryptInfo);
+		std::wstring outFile = std::get<1>(encryptInfo);
+		std::wstring decryptOutFile = to_wstr(Poco::Path::current()) + L"test_decrypt_file_out.txt";
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyDecryptFile, outFile.data(), decryptOutFile.data(), _RS_CONTAINER_ID);
+		LOG_ASSERT(isEncrypted);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(isSuccessful(jsonDoc));
+		LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).exists());
 
-			Poco::FileInputStream ifs(to_u8(decryptOutFile), std::ios::binary);
-			char tt[sizeof(TEST_DATA) - 1];
-			ifs.read(tt, sizeof(TEST_DATA) - 1);
-			LOG_ASSERT(ifs);
-			LOG_ASSERT(std::equal(tt, tt + (sizeof(TEST_DATA) - 1), TEST_DATA));
+		Poco::FileInputStream ifs(to_u8(decryptOutFile), std::ios::binary);
+		char tt[sizeof(TEST_DATA) - 1];
+		ifs.read(tt, sizeof(TEST_DATA) - 1);
+		LOG_ASSERT(ifs);
+		LOG_ASSERT(std::equal(tt, tt + (sizeof(TEST_DATA) - 1), TEST_DATA));
 
-			//TODO: 这里测试的结果，源文件只有4个字节长度，解密后的文件，虽然前4个字节是正确的，但是整个文件会强制变成128字节，并且后面的是乱码
-			LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).getSize() == (sizeof(TEST_DATA) - 1));
-			LOG_END();
-		}
+		//TODO: 这里测试的结果，源文件只有4个字节长度，解密后的文件，虽然前4个字节是正确的，但是整个文件会强制变成128字节，并且后面的是乱码
+		LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).getSize() == (sizeof(TEST_DATA) - 1));
+		LOG_END();FOR_END();
+	}
+
+	//预期失败
+	{
+		auto encryptInfo = fn();
+		bool isEncrypted = std::get<0>(encryptInfo);
+		std::wstring outFile = std::get<1>(encryptInfo);
+		std::wstring decryptOutFile = to_wstr(Poco::Path::current()) + L"test_decrypt_file_out.txt";
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyDecryptFile, outFile.data(), decryptOutFile.data(), L"");
+		LOG_ASSERT(isEncrypted);
+		LOG_ASSERT(!hasParseError(jsonDoc));
+		LOG_ASSERT(hasCode(jsonDoc));
+		LOG_ASSERT(!isSuccessful(jsonDoc));
+		
+		LOG_END();FOR_END();
 	}
 }
 
@@ -736,10 +808,11 @@ void UkeyTestAuto::testKeyStatus()
 {
 	//预期成功1
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_KeyStatus, _RS_CONTAINER_ID);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_KeyStatus, _RS_CONTAINER_ID);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));//这里测试的结果应该是0000，未登录情况应该非0000
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }

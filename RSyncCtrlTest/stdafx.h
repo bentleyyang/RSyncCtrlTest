@@ -54,6 +54,10 @@
 #endif
 
 #include <vector>
+#include <thread>
+
+#include "Poco/Thread.h"
+#include "Poco/Stopwatch.h"
 
 #include "util.h"
 #include "CDRS_CertSafe.h"
@@ -62,7 +66,8 @@
 
 
 extern Poco::FileOutputStream assertLogOfs;
-#define LOG_BEG(inputInfo, outputInfo) \
+extern Poco::Stopwatch swLog;
+#define LOG_BEG0(inputInfo, outputInfo) \
 {std::string u8;									 \
 u8.append(__func__).append(slash);				 \
 u8.append(u8"输入：").append(slash);			   \
@@ -74,21 +79,30 @@ assertLogOfs.write(u8.data(), u8.length());\
 OutputDebugStringW(to_wstr(u8).data());}
 
 #define _LOG_END0() \
-{std::string u8;									  \
+{swLog.stop();\
+std::string u8;									  \
 u8.append(slash).append(slash);					  \
 u8.append(u8"======================================");			  \
+u8.append(std::to_string(swLog.elapsed())).append("us");\
 u8.append(slash).append(slash);					  \
 assertLogOfs.write(u8.data(), u8.length()); \
-OutputDebugStringW(to_wstr(u8).data()); }
+OutputDebugStringW(to_wstr(u8).data());} 
 
-#define LOG_BEG2(fn, ...) \
-for(int i=0;i<m_TimePerTest;i++){\
+#define FOR()\
+for(int i=0;i<m_TimePerTest;i++){
+
+#define FOR_END()\
+}
+
+#define LOG_BEG(fn, ...) \
+if(/*i!=m_TimePerTest-1*/true){Poco::Thread::sleep(20);}\
+swLog.restart();\
 CString jsonStr = fn(__VA_ARGS__);\
-LOG_BEG(argsFormat(__VA_ARGS__), to_u8(jsonStr.GetBuffer()));\
+LOG_BEG0(argsFormat(__VA_ARGS__), to_u8(jsonStr.GetBuffer()));\
 GDoc jsonDoc = parseJson(jsonStr);
 
 #define LOG_END()                                 \
-_LOG_END0();}
+_LOG_END0();
 
 #if 1
 #define LOG_ASSERT(cond)                                                                                              \

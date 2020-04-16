@@ -7,6 +7,7 @@
 
 
 Poco::FileOutputStream assertLogOfs(Poco::Path::current()+(u8"测试结果.txt"), std::ios::binary|std::ios::trunc);
+Poco::Stopwatch swLog;
 
 CDRS_CertSafe* s_pDRS_CertSafeCtrl = NULL;
 HWND s_hMainWnd = NULL;

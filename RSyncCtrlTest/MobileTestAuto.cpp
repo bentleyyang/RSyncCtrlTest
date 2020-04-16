@@ -32,7 +32,8 @@ void MobileTestAuto::testGetTransid()
 
 	//预期成功1
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GetTransid, L"1000");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GetTransid, L"1000");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -43,7 +44,7 @@ void MobileTestAuto::testGetTransid()
 		//LOG_ASSERT(transidContent.length() == 21);
 		LOG_ASSERT(!transidContent.empty());
 		LOG_ASSERT(std::all_of(transidContent.begin(), transidContent.end(), ::isdigit));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 #if UNNECISSARY_ASSERT
@@ -66,8 +67,9 @@ void MobileTestAuto::testCloudLoginAuth()
 
 	//预期成功
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudLoginAuth, transId.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudLoginAuth, transId.data());
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
@@ -80,7 +82,7 @@ void MobileTestAuto::testCloudLoginAuth()
 		auto authIdent = getStrMember(jsonDoc, "/data/authIdent");
 		LOG_ASSERT(authIdent.first);
 		std::string& authIdentContent = authIdent.second;
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 }
@@ -94,8 +96,9 @@ void MobileTestAuto::testCloudGetAuth()
 	//预期返回授权成功
 	{
 		bool isEncryptAuthSuccessful=(encryptAuth());//请求授权
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudGetAuth, transId.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudGetAuth, transId.data());
 		LOG_ASSERT(isEncryptAuthSuccessful);
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
@@ -119,7 +122,7 @@ void MobileTestAuto::testCloudGetAuth()
 		LOG_ASSERT(keySn.first);
 		std::string& keySnContent = keySn.second;
 		//TODO: authType为1时有值
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 #if UNNECISSARY_ASSERT
@@ -153,24 +156,26 @@ void MobileTestAuto::testGreateQRCode()
 
 	//预期成功
 	{
+		FOR();
 		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_create_qrcode_out.bmp";
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GreateQRCode, TEST_DATA_W, outFile.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GreateQRCode, TEST_DATA_W, outFile.data());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
 		LOG_ASSERT(Poco::File(to_u8(outFile)).exists());
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 输出目录错误
 	{
+		FOR();
 		std::wstring outFile = L"lsdkfjgl";
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_GreateQRCode, TEST_DATA_W, outFile.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_GreateQRCode, TEST_DATA_W, outFile.data());
 		LOG_ASSERT(!Poco::File(to_u8(outFile)).exists());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -182,8 +187,9 @@ void MobileTestAuto::testCloudSealAuth()
 
 	//预期成功
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudSealAuth, transId.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudSealAuth, transId.data());
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
@@ -196,7 +202,7 @@ void MobileTestAuto::testCloudSealAuth()
 		auto authIdent = getStrMember(jsonDoc, "/data/authIdent");
 		LOG_ASSERT(authIdent.first);
 		std::string& authIdentContent = authIdent.second;
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -209,7 +215,8 @@ void MobileTestAuto::testCloudGetSealList()
 
 	//预期成功
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudGetSealList, token.data());
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudGetSealList, token.data());
 		LOG_ASSERT(!token.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
@@ -224,25 +231,27 @@ void MobileTestAuto::testCloudGetSealList()
 			LOG_ASSERT(elm.HasMember("signSn"));
 			LOG_ASSERT(elm.HasMember("certBase64"));
 		}
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 token错误
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudGetSealList, L"-1e");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudGetSealList, L"-1e");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 token为空
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudGetSealList, L"");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudGetSealList, L"");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -253,44 +262,45 @@ void MobileTestAuto::testCloudSignByP7()
 	std::wstring transId;
 	std::wstring token = getSealToken();
 	std::wstring keySn = m_SealList[0].keySn;
-	LOG_ASSERT(!token.empty());
-	LOG_ASSERT(!keySn.empty());
 
 	//预期成功
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudSignByP7, TEST_DATA_W, keySn.data(), transId.data(), token.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudSignByP7, TEST_DATA_W, keySn.data(), transId.data(), token.data());
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!token.empty());
 		LOG_ASSERT(!keySn.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 token错误
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudSignByP7, TEST_DATA_W, keySn.data(), transId.data(), L"");
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudSignByP7, TEST_DATA_W, keySn.data(), transId.data(), L"");
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!keySn.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 keySn错误
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudSignByP7, TEST_DATA_W, L"", transId.data(), token.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudSignByP7, TEST_DATA_W, L"", transId.data(), token.data());
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!token.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -302,8 +312,9 @@ void MobileTestAuto::testCloudEncryptAuth()
 
 	//预期成功
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudEncryptAuth, transId.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudEncryptAuth, transId.data());
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
@@ -316,7 +327,7 @@ void MobileTestAuto::testCloudEncryptAuth()
 		auto authIdent = getStrMember(jsonDoc, "/data/authIdent");
 		LOG_ASSERT(authIdent.first);
 		std::string& authIdentContent = authIdent.second;
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -330,8 +341,9 @@ void MobileTestAuto::testCloudEncryptData()
 
 	//预期成功
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudEncryptData, TEST_DATA_W, transId.data(), token.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudEncryptData, TEST_DATA_W, transId.data(), token.data());
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!token.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
@@ -341,18 +353,19 @@ void MobileTestAuto::testCloudEncryptData()
 		auto encReachKey = getStrMember(jsonDoc, "/data/encReachKey");
 		LOG_ASSERT(encReachKey.first);
 		std::string& encReachKeyContent = encReachKey.second;
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 token错误
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudEncryptData, TEST_DATA_W, transId.data(), L"");
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudEncryptData, TEST_DATA_W, transId.data(), L"");
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -379,12 +392,13 @@ void MobileTestAuto::testCloudEncryptFile()
 
 	//预期成功
 	{
-		transId = getTransid();
 		bool isCreatedFile;
 		std::wstring inFile;
 		std::wstring outFile;
 		std::tie(isCreatedFile, inFile, outFile) = fn();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudEncryptFile, inFile.data(), outFile.data(), transId.data(), token.data());
+		FOR();
+		transId = getTransid();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudEncryptFile, inFile.data(), outFile.data(), transId.data(), token.data());
 		LOG_ASSERT(isCreatedFile);
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!token.empty());
@@ -400,7 +414,7 @@ void MobileTestAuto::testCloudEncryptFile()
 		auto encCertBase64 = getStrMember(jsonDoc, "/data/encCertBase64");
 		LOG_ASSERT(encCertBase64.first);
 		std::string& encCertBase64Content = encCertBase64.second;
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 原文件不存在
@@ -411,31 +425,33 @@ void MobileTestAuto::testCloudEncryptFile()
 		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
 		isFileNotCreated = isFileNotCreated && (!Poco::File(to_u8(inFile)).exists());
 
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudEncryptFile, inFile.data(), outFile.data(), transId.data(), token.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudEncryptFile, inFile.data(), outFile.data(), transId.data(), token.data());
 		LOG_ASSERT(isFileNotCreated);
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!token.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 token错误
 	{
-		transId = getTransid();
 		bool isCreatedFile;
 		std::wstring inFile;
 		std::wstring outFile;
 		std::tie(isCreatedFile, inFile, outFile) = fn();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudEncryptFile, inFile.data(), outFile.data(), transId.data(), L"");
+		FOR();
+		transId = getTransid();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudEncryptFile, inFile.data(), outFile.data(), transId.data(), L"");
 		LOG_ASSERT(isCreatedFile);
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -446,7 +462,8 @@ void MobileTestAuto::testEncryptDataBase64()
 
 	//预期成功
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_EncryptDataBase64, TEST_DATA_W, _RS_CERT_ENCRYPT);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_EncryptDataBase64, TEST_DATA_W, _RS_CERT_ENCRYPT);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
@@ -454,16 +471,17 @@ void MobileTestAuto::testEncryptDataBase64()
 		auto encReachKey = getStrMember(jsonDoc, "/data/encReachKey");
 		LOG_ASSERT(encReachKey.first);
 		std::string& encReachKeyContent = encReachKey.second;
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 证书base64错误
 	{
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_EncryptDataBase64, TEST_DATA_W, L"");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_EncryptDataBase64, TEST_DATA_W, L"");
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -493,13 +511,14 @@ void MobileTestAuto::testEncryptFileBase64()
 		std::wstring inFile;
 		std::wstring outFile;
 		std::tie(isCreatedFile, inFile, outFile) = fn();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_EncryptFileBase64, inFile.data(), outFile.data(), _RS_CERT_ENCRYPT);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_EncryptFileBase64, inFile.data(), outFile.data(), _RS_CERT_ENCRYPT);
 		LOG_ASSERT(isCreatedFile);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
 		LOG_ASSERT(Poco::File(to_u8(outFile)).exists());
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 原文件不存在
@@ -509,12 +528,13 @@ void MobileTestAuto::testEncryptFileBase64()
 		std::wstring inFile = L"C:/agag2342sdfgsfg";
 		std::wstring outFile = to_wstr(Poco::Path::current()) + L"test_encrypt_file_out.txt";
 		isFileNotCreated=(!Poco::File(to_u8(inFile)).exists());
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_EncryptFileBase64, inFile.data(), outFile.data(), _RS_CERT_ENCRYPT);
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_EncryptFileBase64, inFile.data(), outFile.data(), _RS_CERT_ENCRYPT);
 		LOG_ASSERT(isFileNotCreated);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 证书base64错误
@@ -523,12 +543,13 @@ void MobileTestAuto::testEncryptFileBase64()
 		std::wstring inFile;
 		std::wstring outFile;
 		std::tie(isCreatedFile, inFile, outFile) = fn();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_EncryptFileBase64, inFile.data(), outFile.data(), L"");
+		FOR();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_EncryptFileBase64, inFile.data(), outFile.data(), L"");
 		LOG_ASSERT(isCreatedFile);
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -540,8 +561,9 @@ void MobileTestAuto::testCloudDevryptAuth()
 
 	//预期成功
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudDevryptAuth, transId.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudDevryptAuth, transId.data());
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
@@ -554,7 +576,7 @@ void MobileTestAuto::testCloudDevryptAuth()
 		auto authIdent = getStrMember(jsonDoc, "/data/authIdent");
 		LOG_ASSERT(authIdent.first);
 		std::string& authIdentContent = authIdent.second;
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -591,10 +613,11 @@ void MobileTestAuto::testCloudDevryptData()
 		bool isEncrypted;
 		std::string encReachKeyContent;
 		std::tie(isEncrypted, encReachKeyContent) = fn();
-		transId = getTransid();
 		token = getDecryptToken();
 
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudDevryptData, to_wstr(encReachKeyContent).data(), L"", transId.data(), token.data());
+		FOR();
+		transId = getTransid();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudDevryptData, to_wstr(encReachKeyContent).data(), L"", transId.data(), token.data());
 		LOG_ASSERT(isEncrypted);
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!token.empty());
@@ -606,7 +629,7 @@ void MobileTestAuto::testCloudDevryptData()
 		LOG_ASSERT(symKey.first);
 		std::string& symKeyContent = symKey.second;
 		LOG_ASSERT(symKeyContent == TEST_DATA);
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -661,10 +684,11 @@ void MobileTestAuto::testCloudDevryptFile()
 		std::tie(isEncrypted, outFile) = fn();
 		//解密
 		std::wstring decryptOutFile = to_wstr(Poco::Path::current()) + L"test_decrypt_file_out.txt";
-		transId = getTransid();
 		token = getDecryptToken();
 
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudDevryptFile, outFile.data(), decryptOutFile.data(), L"", transId.data(), token.data());
+		FOR();
+		transId = getTransid();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudDevryptFile, outFile.data(), decryptOutFile.data(), L"", transId.data(), token.data());
 		LOG_ASSERT(isEncrypted);
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!token.empty());
@@ -681,7 +705,7 @@ void MobileTestAuto::testCloudDevryptFile()
 
 		//TODO: 这里测试的结果，源文件只有4个字节长度，解密后的文件，虽然前4个字节是正确的，但是整个文件会强制变成128字节，并且后面的是乱码
 		LOG_ASSERT(Poco::File(to_u8(decryptOutFile)).getSize() == (sizeof(TEST_DATA) - 1));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	
@@ -736,18 +760,19 @@ void MobileTestAuto::testCloudReceiveDevryptResult()
 	//预期成功
 	{
 		bool isProcessed = fn();
-		transId = getTransid();
 		token = getDecryptToken();
 		
 		//wchar_t uu[80] = {0};
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudReceiveDevryptResult, transId.data(), token.data(), L"1");
+		FOR();
+		transId = getTransid();
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudReceiveDevryptResult, transId.data(), token.data(), L"1");
 		LOG_ASSERT(isProcessed);
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!token.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -761,8 +786,9 @@ void MobileTestAuto::testCloudGetCompanyCert()
 
 	//预期成功
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudGetCompanyCert, transId.data(), token.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudGetCompanyCert, transId.data(), token.data());
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!token.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
@@ -776,18 +802,19 @@ void MobileTestAuto::testCloudGetCompanyCert()
 		auto encCertBase64 = getStrMember(jsonDoc, "/data/encCertBase64");
 		LOG_ASSERT(encCertBase64.first);
 		std::string& encCertBase64Content = encCertBase64.second;
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 token错误
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudGetCompanyCert, transId.data(), L"");
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudGetCompanyCert, transId.data(), L"");
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -799,8 +826,9 @@ void MobileTestAuto::testCloudGetCertAuth()
 
 	//预期成功
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudGetCertAuth, transId.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudGetCertAuth, transId.data());
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
@@ -813,7 +841,7 @@ void MobileTestAuto::testCloudGetCertAuth()
 		auto authIdent = getStrMember(jsonDoc, "/data/authIdent");
 		LOG_ASSERT(authIdent.first);
 		std::string& authIdentContent = authIdent.second;
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -827,8 +855,9 @@ void MobileTestAuto::testCloudGetCertBase64()
 
 	//预期成功
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudGetCertBase64, transId.data(), token.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudGetCertBase64, transId.data(), token.data());
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!token.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
@@ -838,18 +867,19 @@ void MobileTestAuto::testCloudGetCertBase64()
 		auto certBase64 = getStrMember(jsonDoc, "/data/certBase64");
 		LOG_ASSERT(certBase64.first);
 		std::string& certBase64Content = certBase64.second;
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 	//预期失败 token错误
 	{
+		FOR();
 		transId = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudGetCertBase64, transId.data(), L"");
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudGetCertBase64, transId.data(), L"");
 		LOG_ASSERT(!transId.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
 		LOG_ASSERT(!isSuccessful(jsonDoc));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 }
 
@@ -861,8 +891,9 @@ void MobileTestAuto::testCloudGetSignResult()
 
 	//预期成功
 	{
+		FOR();
 		std::wstring transid = getTransid();
-		LOG_BEG2(s_pDRS_CertSafeCtrl->RS_CloudGetSignResult, transid.data());
+		LOG_BEG(s_pDRS_CertSafeCtrl->RS_CloudGetSignResult, transid.data());
 		LOG_ASSERT(!transid.empty());
 		LOG_ASSERT(!hasParseError(jsonDoc));
 		LOG_ASSERT(hasCode(jsonDoc));
@@ -875,7 +906,7 @@ void MobileTestAuto::testCloudGetSignResult()
 
 		LOG_ASSERT(hasStrMember(jsonDoc, "/data/signdMsg"));
 		LOG_ASSERT(hasStrMember(jsonDoc, "/data/certBase64"));
-		LOG_END();
+		LOG_END();FOR_END();
 	}
 
 }

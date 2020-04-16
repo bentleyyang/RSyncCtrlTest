@@ -2,7 +2,7 @@
 // Microsoft Visual C++ 生成的包含文件。
 // 供 RSyncCtrlTest.rc 使用
 //
-#define Minor                           0
+#define Minor                           1
 #define Major                           1
 #define MAIN                            1
 #define FileIndex                       1

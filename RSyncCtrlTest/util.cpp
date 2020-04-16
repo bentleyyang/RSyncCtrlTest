@@ -66,6 +66,17 @@ bool login()
 {
 	using namespace rapidjson;
 
+	//先获取密码重试次数，保证不被锁住
+	{
+		auto retryCount = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetPinRetryCount(_RS_CONTAINER_ID); }, "/data/retryCount");
+		if (!retryCount.first) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
+		std::string retryCountContent = retryCount.second;
+		if (retryCountContent.empty()) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
+		if (!std::all_of(retryCountContent.begin(), retryCountContent.end(), ::isdigit)) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
+		int cnt = atoi(retryCountContent.c_str());
+		if (cnt <= 3) { AfxMessageBox(L"密码重试次数<=3，将结束程序"); ExitProcess(0); }
+
+	}
 	//预期成功1 不带原文
 	{
 		GDoc jsonDoc = parseJson([]()->CString {return s_pDRS_CertSafeCtrl->RS_CertLogin(_RS_CONTAINER_ID, _RS_PASSWD); });
@@ -81,6 +92,17 @@ bool login(const std::wstring& pw)
 {
 	using namespace rapidjson;
 
+	//先获取密码重试次数，保证不被锁住
+	{
+		auto retryCount = parseJsonAndGetMember([]()->CString {return s_pDRS_CertSafeCtrl->RS_GetPinRetryCount(_RS_CONTAINER_ID); }, "/data/retryCount");
+		if (!retryCount.first) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
+		std::string retryCountContent = retryCount.second;
+		if (retryCountContent.empty()) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
+		if (!std::all_of(retryCountContent.begin(), retryCountContent.end(), ::isdigit)) { AfxMessageBox(L"获取密码重试次数失败，将结束程序"); ExitProcess(0); }
+		int cnt = atoi(retryCountContent.c_str());
+		if (cnt <= 3) { AfxMessageBox(L"密码重试次数<=3，将结束程序"); ExitProcess(0); }
+
+	}
 	//预期成功1 不带原文
 	{
 		GDoc jsonDoc = parseJson([&pw]()->CString {return s_pDRS_CertSafeCtrl->RS_CertLogin(_RS_CONTAINER_ID, pw.data()); });
